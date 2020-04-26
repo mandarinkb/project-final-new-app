@@ -1,0 +1,121 @@
+<ion-header>
+  <ion-toolbar color="success">
+    <ion-title style="text-align: center;">
+      ผลบอล
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+<ion-content fullscreen>
+  <ion-grid>
+
+    <ion-row>
+      <ion-col size="12">
+        <ion-row>
+          <ion-col size="3">
+            <div *ngIf="leagueLogo">
+              <ion-item lines="none">
+                <img src="assets/img/thleague.png" ><!--style="width: 27%;height: auto;"-->
+              </ion-item>
+            </div>
+            <div *ngIf="!leagueLogo">
+              <ion-item lines="none">
+                <img src="assets/img/premierleague.png" style="width: 90%;height: auto;"><!--style="width: 25%;height: auto;"-->
+              </ion-item>
+            </div>
+          </ion-col>
+          <ion-col size="9" style="margin-top: 12px">
+            <div *ngIf="leagueLogo">
+              <ion-label>ไทยลีก</ion-label>
+            </div>
+            <div *ngIf="!leagueLogo">
+              <ion-label>พรีเมียร์ลีก</ion-label>
+            </div>
+          </ion-col>
+        </ion-row>
+        
+        <ion-row>
+          <ion-col size="7">
+            <ion-chip outline color="primary">
+              <ion-datetime displayFormat="DD-MM-YYYY" (ionChange)="onChangeDate()" [(ngModel)]="today" done-text="ตกลง"
+                cancel-text="ยกเลิก" style="padding-top: 12px;"></ion-datetime>
+              <ion-icon name="arrow-dropdown"></ion-icon>
+            </ion-chip>
+          </ion-col>
+          <ion-col size="5">
+            <ion-chip outline color="secondary">
+              <ion-label></ion-label>
+              <ion-select (ionChange)="onChangeLeague($event)" okText="ตกลง" cancelText="ยกเลิก"
+                style="padding-top: 15px;">
+                <ion-select-option value="thaipremierleague" selected>ไทยลีก</ion-select-option>
+                <ion-select-option value="premierleague">พรีเมียร์ลีก</ion-select-option>
+              </ion-select>
+            </ion-chip>
+          </ion-col>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+
+    <div *ngIf="emptyComponent">
+      <ion-card>
+        <ion-card-content>
+          <ion-row>
+              <ion-col size="12">
+                <div class="ion-text-center">
+              <p>วันนี้ไม่มีรายการแข่งขันฟุตบอล</p>
+              </div>
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+      </ion-card>
+    </div>
+    <div *ngIf="!emptyComponent">
+      <div *ngFor="let item of teamObj">
+        <ion-card>
+          <ion-card-content>
+            <ion-row>
+              <ion-col size="2">
+                <img src="{{item.homeImg}}" style="width: 75%;height: auto;">
+              </ion-col>
+              <ion-col size="7">
+                <ion-label>
+                  <p>{{item.homeTeam}}</p>
+                </ion-label>
+              </ion-col>
+              <ion-col size="1">
+                <ion-label>
+                  <p>{{item.homeScore}}</p>
+                </ion-label>
+              </ion-col>
+              <ion-col size="1">
+                <div *ngIf="item.homeScore > item.awayScore">
+                  <ion-icon name="arrow-dropleft" style="color: green;"></ion-icon>
+                </div>
+              </ion-col>
+            </ion-row>
+
+            <ion-row>
+              <ion-col size="2">
+                <img src="{{item.awayImg}}" style="width: 75%;height: auto;">
+              </ion-col>
+              <ion-col size="7">
+                <ion-label>
+                  <p>{{item.awayTeam}}</p>
+                </ion-label>
+              </ion-col>
+              <ion-col size="1">
+                <ion-label>
+                  <p>{{item.awayScore}}</p>
+                </ion-label>
+              </ion-col>
+              <ion-col size="1">
+                <div *ngIf="item.homeScore < item.awayScore">
+                  <ion-icon name="arrow-dropleft" style="color: green;"></ion-icon>
+                </div>
+              </ion-col>
+            </ion-row>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+  </ion-grid>
+</ion-content>

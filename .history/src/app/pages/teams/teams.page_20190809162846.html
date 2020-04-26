@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar color="success">
+      <ion-buttons slot="start">
+        <ion-back-button color="light"></ion-back-button>
+      </ion-buttons>
+    <ion-title>ทีม</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+    <ion-grid>
+        <ion-row>
+            <ion-col size="12">
+              <div *ngIf="leagueComponent">
+                <ion-item lines="none">
+                  <img src="assets/img/thleague.png" style="width: 17%;height: auto;">
+                  <ion-label>
+                      <p style="padding-left: 10px;">
+                        {{league}}
+                      </p>
+                    </ion-label>
+                </ion-item>
+              </div>
+              <div *ngIf="!leagueComponent"> 
+                <ion-item lines="none">
+                  <img src="assets/img/premierleague.png" style="width: 13%;height: auto;">
+                  <ion-label>
+                      <p style="padding-left: 10px;">
+                        {{league}}
+                      </p>
+                    </ion-label>
+                </ion-item>
+              </div>
+            </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="12">
+            <div *ngFor="let item of teams">
+              <ion-item lines="full" [routerLink]="'/team-detail/'+ item.team">
+                <img src="{{item.teamImg}}" style="width: 10%;height: auto;">
+                <ion-label>
+                  <p style="padding-left: 10px;">
+                    {{item.team}}
+                  </p>
+                </ion-label>
+                <ion-icon name="arrow-dropright"></ion-icon>
+              </ion-item>
+            </div>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+</ion-content>
