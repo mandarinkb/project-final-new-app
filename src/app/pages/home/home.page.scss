@@ -1,0 +1,41 @@
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+  }
+
+  .button-sm {
+    padding: 3px 0px;
+    font-size: 25px;
+  }
+
+  .discount-tag {
+    position: relative;
+    float: left;
+    background-color: rgba(61,97,153,0.9);
+    font-size: 16px;
+    color: #fff;
+    text-transform: uppercase;
+    padding: 7px 22px 7px 10px;
+  }
+  .discount-tag:before,
+  .discount-tag:after {
+    content: '';
+    display: block;
+    position: absolute;
+    right: -16px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+  }
+  .discount-tag:before {
+    top: 0;
+    border-width: 16px 16px 0 0;
+    border-color: rgba(61,97,153,0.9) transparent transparent transparent;
+  }
+  .discount-tag:after {
+    bottom: 0;
+    border-width: 16px 0 0 16px;
+    border-color: transparent transparent transparent rgba(61,97,153,0.9);
+  }
