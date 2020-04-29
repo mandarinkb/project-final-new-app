@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuController } from '@ionic/angular';
+import { MenuController, Platform } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,6 +8,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
+  subscription: any;
+
 
   image: string;
   name: string;
@@ -21,7 +23,8 @@ export class HomePage implements OnInit {
   listItem: any;
   searchKey = '';
   constructor(private menuController: MenuController,
-              private router: Router ) { }
+              private router: Router ,
+              private platform: Platform) { }
 
   ngOnInit() {
     this.listItem = [{
@@ -54,5 +57,15 @@ export class HomePage implements OnInit {
   redirect(pagename: string) {
     this.router.navigate([pagename]);
   }
-
+  // ปิด app เมื่อกดปุ่ม back button
+  ionViewDidEnter() {
+    this.subscription = this.platform.backButton.subscribe(() => {
+         // tslint:disable-next-line:no-string-literal
+         navigator['app'].exitApp();
+    });
+  }
+  ionViewWillLeave() {
+    this.subscription.unsubscribe();
+  }
+  // end function ปิด app เมื่อกดปุ่ม back button
 }
