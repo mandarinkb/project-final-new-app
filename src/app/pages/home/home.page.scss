@@ -9,7 +9,7 @@
     padding: 3px 0px;
     font-size: 25px;
   }
-
+/*ส่วนลด*/
   .discount-tag {
     position: relative;
     float: left;
@@ -38,4 +38,14 @@
     bottom: 0;
     border-width: 16px 0 0 16px;
     border-color: transparent transparent transparent rgba(61,97,153,0.9);
+  }
+  /*ราคาปัจจุบัน*/
+  .price-text {
+    font-size: 25px;
+    color: red;
+  }
+  /**/
+  .oprice-text {
+    font-size: 20px;
+    text-decoration: line-through;
   }
