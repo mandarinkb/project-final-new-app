@@ -78,29 +78,53 @@
     </ion-header>
     <ion-content>
       <ion-list>
-        <ion-item>
-          <ion-icon name="mail" slot="start"></ion-icon>
-          <ion-label>Inbox</ion-label>
+        <ion-item  button (click)="selectMenu('ผลิตภัณฑ์เพื่อสุขภาพ ความงาม')">
+          <ion-icon name="mail" slot="start"></ion-icon><!--[routerLink]="'/fixtures/'+item.homeTeam+' - '+item.awayTeam"-->
+          <ion-label>ผลิตภัณฑ์เพื่อสุขภาพ ความงาม</ion-label>
         </ion-item>
-        <ion-item>
+        <ion-item button (click)="selectMenu('เครื่องดื่ม ขนมขบเคี้ยว ของหวาน')">
           <ion-icon name="paper-plane" slot="start"></ion-icon>
-          <ion-label>Outbox</ion-label>
+          <ion-label>เครื่องดื่ม ขนมขบเคี้ยว ของหวาน</ion-label>
         </ion-item>
-        <ion-item>
+        <ion-item button (click)="selectMenu('อาหารสด แช่เเข็ง เบเกอรี่')">
           <ion-icon name="heart" slot="start"></ion-icon>
-          <ion-label>Favorites</ion-label>
+          <ion-label>อาหารสด แช่เเข็ง เบเกอรี่</ion-label>
         </ion-item>
-        <ion-item>
+        <ion-item button (click)="selectMenu('เครื่องใช้ไฟฟ้า อุปกรณ์ภายในบ้าน')">
           <ion-icon name="archive" slot="start"></ion-icon>
-          <ion-label>Archived</ion-label>
+          <ion-label>เครื่องใช้ไฟฟ้า อุปกรณ์ภายในบ้าน</ion-label>
         </ion-item>
-        <ion-item>
+        <ion-item button (click)="selectMenu('ผลิตภัณฑ์สำหรับเด็ก')">
           <ion-icon name="trash" slot="start"></ion-icon>
-          <ion-label>Trash</ion-label>
+          <ion-label>ผลิตภัณฑ์สำหรับเด็ก</ion-label>
         </ion-item>
-        <ion-item>
+        <ion-item button (click)="selectMenu('ผลิตภัณฑ์ทำความสะอาดในครัวเรือน')">
           <ion-icon name="warning" slot="start"></ion-icon>
-          <ion-label>Spam</ion-label>
+          <ion-label>ผลิตภัณฑ์ทำความสะอาดในครัวเรือน</ion-label>
+        </ion-item>
+        <ion-item button (click)="selectMenu('อาหารแห้ง อาหารกระป๋อง')">
+          <ion-icon name="warning" slot="start"></ion-icon>
+          <ion-label>อาหารแห้ง อาหารกระป๋อง</ion-label>
+        </ion-item>
+        <ion-item button (click)="selectMenu('ผลิตภัณฑ์สำหรับสัตว์เลี้ยง')">
+          <ion-icon name="warning" slot="start"></ion-icon>
+          <ion-label>ผลิตภัณฑ์สำหรับสัตว์เลี้ยง</ion-label>
+        </ion-item>
+        <ion-item button (click)="selectMenu('สินค้าอื่นๆ')">
+          <ion-icon name="warning" slot="start"></ion-icon>
+          <ion-label>สินค้าอื่นๆ</ion-label>
+        </ion-item>
+
+        <ion-item>
+          <ion-label>Gaming</ion-label>
+          <ion-select interface="popover">
+            <ion-select-option value="nes">NES</ion-select-option>
+            <ion-select-option value="n64">Nintendo64</ion-select-option>
+            <ion-select-option value="ps">PlayStation</ion-select-option>
+            <ion-select-option value="genesis">Sega Genesis</ion-select-option>
+            <ion-select-option value="saturn">Sega Saturn</ion-select-option>
+            <ion-select-option value="snes">SNES</ion-select-option>
+          </ion-select>
         </ion-item>
       </ion-list>
     </ion-content>

@@ -50,6 +50,12 @@ export class HomePage implements OnInit {
   ];
   }
 
+  selectMenu(value) {
+    console.log(value);
+    this.menuController.close(); // close menu
+
+  }
+
   async openMenu() {
     return await this.menuController.open();
   }
