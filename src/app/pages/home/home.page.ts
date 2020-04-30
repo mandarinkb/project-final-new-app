@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuController, Platform, LoadingController } from '@ionic/angular';
+import { MenuController, Platform, LoadingController, ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
+import { SearchFilterPage } from '../modal/search-filter/search-filter.page';
 
 @Component({
   selector: 'app-home',
@@ -24,7 +25,8 @@ export class HomePage implements OnInit {
   constructor(private menuController: MenuController,
               private router: Router ,
               private platform: Platform ,
-              private loadingController: LoadingController) { }
+              private loadingController: LoadingController,
+              public modalCtrl: ModalController) { }
 
   ngOnInit() {
     this.listItem = [{
@@ -82,6 +84,12 @@ export class HomePage implements OnInit {
     if (this.searchValue !== '') {
       this.delay(5000);
     }
+  }
+  async searchFilter() {
+    const modal = await this.modalCtrl.create({
+      component: SearchFilterPage
+    });
+    return await modal.present();
   }
 
   async openMenu() {

@@ -8,6 +8,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/home/home.module').then((m) => m.HomePageModule)
   },
   { path: 'home', loadChildren: './pages/home/home.module#HomePageModule' },
+  { path: 'search-filter', loadChildren: './pages/modal/search-filter/search-filter.module#SearchFilterPageModule' },
   /*{ path: 'home', loadChildren: './pages/home/home.module#HomePageModule' }
   { path: 'results', loadChildren: './pages/results/results.module#ResultsPageModule' },
   { path: 'fixtures/:id', loadChildren: './pages/fixtures/fixtures.module#FixturesPageModule' },
