@@ -20,7 +20,7 @@
     </ion-header>
 <!--content-->    
     <ion-content fullscreen>
-      <ion-card *ngFor="let item of listItem"><!--*ngFor="let item of listItem"-->
+      <ion-card *ngFor="let item of service.listItems"><!--*ngFor="let item of listItem"-->
         <ion-card-content>
           <ion-row style="margin-top: -18px;margin-left: -21px;">
             <ion-col size="12">
@@ -59,7 +59,7 @@
             </ion-col>
             <ion-col size="6">
               <div class="ion-text-right">
-                <ion-button color="primary" href="{{item.url}}" target="_blank">ดูรายละเอียด</ion-button>
+                <ion-button color="primary" href="{{item.productUrl}}" target="_blank">ดูรายละเอียด</ion-button>
                 </div>
             </ion-col>
           </ion-row>

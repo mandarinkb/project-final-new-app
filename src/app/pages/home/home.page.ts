@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { MenuController, Platform, LoadingController, ModalController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { SearchFilterPage } from '../modal/search-filter/search-filter.page';
+import { AllService } from 'src/app/share/service/all.service';
+import { Items } from 'src/app/share/model/items.model';
 
 @Component({
   selector: 'app-home',
@@ -20,45 +22,75 @@ export class HomePage implements OnInit {
   url: string;
   category: string;
 
-  listItem: any;
   searchValue = '';
-  constructor(private menuController: MenuController,
+  constructor(public service: AllService,
+              private menuController: MenuController,
               private router: Router ,
               private platform: Platform ,
               private loadingController: LoadingController,
               public modalCtrl: ModalController) { }
 
   ngOnInit() {
-    this.listItem = [{
-      image: 'https://secure.ap-tescoassets.com/assets/TH/420/9556001132420/ShotType1_540x540.jpg',
-      name: 'เนสท์เล่ ซีรีแล็ค อินแฟนท์ ซีเรียล ผสมนม อาหารเสริมธัญพืช สูตรข้าวสาลีผสมกล้วยบดและนม 250กรัม',
-      price: 85,
-      originalPrice: 99,
-      discount: 14.1,
-      icon: 'https://www.tescolotus.com/assets/theme2018/tl-theme/img/logo.png',
-      url: 'https://shoponline.tescolotus.com/groceries/th-TH/products/6022001840',
-      category: 'ผลิตภัณฑ์สำหรับเด็ก'
-    },
-    {
-      image: 'https://secure.ap-tescoassets.com/assets/TH/197/8852796103197/ShotType1_540x540.jpg',
-      name: 'พีเดียชัวร์ 1+ คอมพลีท อาหารสูตรครบถ้วนสำหรับเด็กที่เบื่ออาหาร กลิ่นวานิลลา 370กรัม x 6 ซอง',
-      price: 2007,
-      originalPrice: 2231,
-      discount: 10,
-      icon: 'https://www.tescolotus.com/assets/theme2018/tl-theme/img/logo.png',
-      url: 'https://shoponline.tescolotus.com/groceries/th-TH/products/6072716835',
-      category: 'ผลิตภัณฑ์สำหรับเด็ก'
-    }
-  ];
-
+    this.readItems();
+  }
+  readItems() {
+    this.present();
+    this.service.getItems().subscribe((res: Items[]) => {
+      this.service.listItems = res;
+    }, err => {
+    });
   }
 
-  async delay(ms: number) {
+  readName(n) {
+    this.present();
+    const objName = {
+      name: n
+    };
+    const jsonName = JSON.stringify(objName); // create json
+    this.service.postName(jsonName).subscribe((res: Items[]) => {
+      this.service.listItems = res;
+    }, err => {
+    });
+  }
+
+  readCategory(c) {
+    this.present();
+    const objCategory = {
+      category: c
+    };
+    const jsonCategory = JSON.stringify(objCategory); // create json
+    this.service.postCategory(jsonCategory).subscribe((res: Items[]) => {
+      this.service.listItems = res;
+    }, err => {
+    });
+  }
+  /*async delay(ms: number) {
     this.openLoading();
     await new Promise(resolve => setTimeout(
         () => resolve(), ms)).then(
         () => this.closeLoading());
   }
+  */
+ async present() {
+  this.isLoading = true;
+  return await this.loadingController.create({
+    message: 'Please wait...',
+    // duration: 5000,
+  }).then(a => {
+    a.present().then(() => {
+      console.log('presented');
+      if (this.isLoading) {
+        a.dismiss().then(() => console.log('abort presenting'));
+      }
+    });
+  });
+}
+
+async dismiss() {
+  this.isLoading = false;
+  return await this.loadingController.dismiss().then(() => console.log('dismissed'));
+}
+
 
   async openLoading() {
     const loading = await this.loadingController.create({
@@ -75,14 +107,14 @@ export class HomePage implements OnInit {
 
   selectMenu(value) {
     console.log(value);
+    this.readCategory(value);
     this.menuController.close(); // close menu
-
   }
 
   search() {
     console.log(this.searchValue);
     if (this.searchValue !== '') {
-      this.delay(5000);
+      this.readName(this.searchValue);
     }
   }
   async searchFilter() {
