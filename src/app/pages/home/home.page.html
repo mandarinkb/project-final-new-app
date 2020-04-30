@@ -10,7 +10,7 @@
       </ion-toolbar>
 <!--search-->
       <ion-toolbar color="dark">
-        <ion-searchbar [(ngModel)]="searchKey" ></ion-searchbar><!--(ionChange)="search($event)"-->
+        <ion-searchbar [(ngModel)]="searchValue" (ionBlur)="search()"></ion-searchbar><!--(ionChange)="search($event)"-->
         <ion-buttons slot="end">
           <ion-button size="small" shape="round" color="medium" ><!--(click)="searchFilter()"-->
             <ion-icon name="options"></ion-icon>

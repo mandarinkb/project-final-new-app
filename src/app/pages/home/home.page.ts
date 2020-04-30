@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { MenuController, Platform } from '@ionic/angular';
+import { MenuController, Platform, LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,9 +8,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
+  isLoading = false;
   subscription: any;
-
-
   image: string;
   name: string;
   price: number;
@@ -21,10 +20,11 @@ export class HomePage implements OnInit {
   category: string;
 
   listItem: any;
-  searchKey = '';
+  searchValue = '';
   constructor(private menuController: MenuController,
               private router: Router ,
-              private platform: Platform) { }
+              private platform: Platform ,
+              private loadingController: LoadingController) { }
 
   ngOnInit() {
     this.listItem = [{
@@ -48,12 +48,40 @@ export class HomePage implements OnInit {
       category: 'ผลิตภัณฑ์สำหรับเด็ก'
     }
   ];
+
+  }
+
+  async delay(ms: number) {
+    this.openLoading();
+    await new Promise(resolve => setTimeout(
+        () => resolve(), ms)).then(
+        () => this.closeLoading());
+  }
+
+  async openLoading() {
+    const loading = await this.loadingController.create({
+      message: 'Please wait...',
+      // duration: 3000
+    });
+    await loading.present().then(() => console.log('open loading...'));
+  }
+
+  async closeLoading() {
+    this.isLoading = false;
+    return await this.loadingController.dismiss().then(() => console.log('close loading...'));
   }
 
   selectMenu(value) {
     console.log(value);
     this.menuController.close(); // close menu
 
+  }
+
+  search() {
+    console.log(this.searchValue);
+    if (this.searchValue !== '') {
+      this.delay(5000);
+    }
   }
 
   async openMenu() {
