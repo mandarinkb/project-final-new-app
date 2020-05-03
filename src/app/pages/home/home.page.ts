@@ -41,7 +41,9 @@ export class HomePage implements OnInit {
     this.openloading();
     this.service.getItems().subscribe((res: Items[]) => {
       this.service.listItems = res;
+      this.closeloading();
     }, err => {
+      this.closeloading();
     });
   }
 
@@ -53,7 +55,10 @@ export class HomePage implements OnInit {
     const jsonName = JSON.stringify(objName); // create json
     this.service.postName(jsonName).subscribe((res: Items[]) => {
       this.service.listItems = res;
+      this.isLoading = true;
+      this.closeloading();
     }, err => {
+      this.closeloading();
     });
   }
 
@@ -68,7 +73,9 @@ export class HomePage implements OnInit {
     const jsonName = JSON.stringify(objName); // create json
     this.service.postNameAndFilter(jsonName).subscribe((res: Items[]) => {
       this.service.listItems = res;
+      this.closeloading();
     }, err => {
+      this.closeloading();
     });
   }
 
@@ -80,7 +87,9 @@ export class HomePage implements OnInit {
     const jsonCategory = JSON.stringify(objCategory); // create json
     this.service.postCategory(jsonCategory).subscribe((res: Items[]) => {
       this.service.listItems = res;
+      this.closeloading();
     }, err => {
+      this.closeloading();
     });
   }
 
@@ -89,10 +98,11 @@ export class HomePage implements OnInit {
     return await this.loadingController.create({
       message: 'Please wait...',
       // duration: 5000,
-    }).then(a => {
-      a.present().then(() => {
-        if (this.isLoading) {
-          a.dismiss().then(() => console.log('abort presenting'));
+    }).then(data => {
+      data.present().then(() => {
+        console.log('open loading');
+        if (!this.isLoading) {
+          data.dismiss().then(() => console.log('close loading'));
         }
       });
     });
@@ -119,6 +129,8 @@ export class HomePage implements OnInit {
         console.log('off filter');
         this.readName(this.searchValue);
       }
+    } else {
+      this.readItems();
     }
     this.modalValue = null;
   }
