@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { SearchFilterPage } from '../modal/search-filter/search-filter.page';
 import { AllService } from 'src/app/share/service/all.service';
 import { Items } from 'src/app/share/model/items.model';
+import { LocalStorageService } from 'src/app/share/service/local-storage.service';
 
 @Component({
   selector: 'app-home',
@@ -23,18 +24,21 @@ export class HomePage implements OnInit {
   category: string;
 
   searchValue = '';
+
+  modalValue: any = null;
   constructor(public service: AllService,
               private menuController: MenuController,
-              private router: Router ,
-              private platform: Platform ,
+              private router: Router,
+              private platform: Platform,
               private loadingController: LoadingController,
-              public modalCtrl: ModalController) { }
+              public modalCtrl: ModalController
+  ) { }
 
   ngOnInit() {
     this.readItems();
   }
   readItems() {
-    this.present();
+    this.openloading();
     this.service.getItems().subscribe((res: Items[]) => {
       this.service.listItems = res;
     }, err => {
@@ -42,7 +46,7 @@ export class HomePage implements OnInit {
   }
 
   readName(n) {
-    this.present();
+    this.openloading();
     const objName = {
       name: n
     };
@@ -53,8 +57,23 @@ export class HomePage implements OnInit {
     });
   }
 
+  readNameAndFilter(n, wn, mi, ma) {
+    this.openloading();
+    const objName = {
+      name: n,
+      webName: wn,
+      minPrice: mi,
+      maxPrice: ma
+    };
+    const jsonName = JSON.stringify(objName); // create json
+    this.service.postNameAndFilter(jsonName).subscribe((res: Items[]) => {
+      this.service.listItems = res;
+    }, err => {
+    });
+  }
+
   readCategory(c) {
-    this.present();
+    this.openloading();
     const objCategory = {
       category: c
     };
@@ -64,63 +83,55 @@ export class HomePage implements OnInit {
     }, err => {
     });
   }
-  /*async delay(ms: number) {
-    this.openLoading();
-    await new Promise(resolve => setTimeout(
-        () => resolve(), ms)).then(
-        () => this.closeLoading());
-  }
-  */
- async present() {
-  this.isLoading = true;
-  return await this.loadingController.create({
-    message: 'Please wait...',
-    // duration: 5000,
-  }).then(a => {
-    a.present().then(() => {
-      console.log('presented');
-      if (this.isLoading) {
-        a.dismiss().then(() => console.log('abort presenting'));
-      }
-    });
-  });
-}
 
-async dismiss() {
-  this.isLoading = false;
-  return await this.loadingController.dismiss().then(() => console.log('dismissed'));
-}
-
-
-  async openLoading() {
-    const loading = await this.loadingController.create({
+  async openloading() {
+    this.isLoading = true;
+    return await this.loadingController.create({
       message: 'Please wait...',
-      // duration: 3000
+      // duration: 5000,
+    }).then(a => {
+      a.present().then(() => {
+        if (this.isLoading) {
+          a.dismiss().then(() => console.log('abort presenting'));
+        }
+      });
     });
-    await loading.present().then(() => console.log('open loading...'));
   }
 
-  async closeLoading() {
+  async closeloading() {
     this.isLoading = false;
-    return await this.loadingController.dismiss().then(() => console.log('close loading...'));
+    return await this.loadingController.dismiss().then(() => console.log('dismissed'));
   }
 
   selectMenu(value) {
-    console.log(value);
     this.readCategory(value);
     this.menuController.close(); // close menu
   }
 
   search() {
-    console.log(this.searchValue);
     if (this.searchValue !== '') {
-      this.readName(this.searchValue);
+      // กรณีใช้ filter
+      if (this.modalValue !== null) {
+        console.log('on filter');
+        this.readNameAndFilter(this.searchValue, this.modalValue.web,
+          this.modalValue.min, this.modalValue.max);
+      } else {  // กรณีไม่ได้ใช้ filter
+        console.log('off filter');
+        this.readName(this.searchValue);
+      }
     }
+    this.modalValue = null;
   }
+
   async searchFilter() {
     const modal = await this.modalCtrl.create({
       component: SearchFilterPage
+
     });
+    modal.onDidDismiss()
+      .then((data) => {
+        this.modalValue = data.data;  // เซ็ตค่าที่รับจาก modal
+      });
     return await modal.present();
   }
 
@@ -134,8 +145,8 @@ async dismiss() {
   // ปิด app เมื่อกดปุ่ม back button
   ionViewDidEnter() {
     this.subscription = this.platform.backButton.subscribe(() => {
-         // tslint:disable-next-line:no-string-literal
-         navigator['app'].exitApp();
+      // tslint:disable-next-line:no-string-literal
+      navigator['app'].exitApp();
     });
   }
   ionViewWillLeave() {

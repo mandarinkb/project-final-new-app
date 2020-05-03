@@ -10,6 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SearchFilterPageModule } from './pages/modal/search-filter/search-filter.module';
+import { IonicStorageModule } from '@ionic/storage';
 
 @NgModule({
   declarations: [AppComponent],
@@ -18,7 +19,8 @@ import { SearchFilterPageModule } from './pages/modal/search-filter/search-filte
             IonicModule.forRoot(),
             AppRoutingModule,
             HttpClientModule,
-            SearchFilterPageModule],
+            SearchFilterPageModule,
+            IonicStorageModule.forRoot()],
   providers: [
     StatusBar,
     SplashScreen,
