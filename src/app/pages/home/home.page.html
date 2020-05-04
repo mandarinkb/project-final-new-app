@@ -19,10 +19,10 @@
       </ion-toolbar>
     </ion-header>
 <!--content-->    
-    <ion-content fullscreen>
+    <ion-content fullscreen *ngIf="haveData"><!--*ngIf="haveData"-->
       <ion-card *ngFor="let item of service.listItems"><!--*ngFor="let item of listItem"-->
         <ion-card-content>
-          <ion-row style="margin-top: -18px;margin-left: -21px;">
+          <ion-row class="discount-position">
             <ion-col size="12">
               <div class="discount-tag">ส่วนลด {{item.discount}}%</div>
             </ion-col>
@@ -44,7 +44,7 @@
             </ion-col>
           </ion-row>
           <ion-row>
-            <ion-col size="12" style="font-size: 20px;text-decoration: line-through;"><!--style="font-size: 20px;text-decoration: line-through;"-->
+            <ion-col size="12" class="original-price-text"><!--style="font-size: 20px;text-decoration: line-through;"-->
               <span>฿</span>
               <span>{{item.originalPrice}}</span> 
             </ion-col>
@@ -53,8 +53,7 @@
           <ion-row>
             <ion-col size="6">
               <div>
-                <img src="{{item.icon}}" style="width: 60px;margin-top: 10px;
-                "/>
+                <img src="{{item.icon}}" class="img-icon"/>
               </div>
             </ion-col>
             <ion-col size="6">
@@ -66,56 +65,61 @@
         </ion-card-content>
       </ion-card>
     </ion-content>
- </div>
 
+    <ion-content fullscreen *ngIf="!haveData">
+      <ion-card class="ion-text-center card-custom">
+        <ion-card-content>
+          <ion-row>
+            <ion-col size="12" class="card-text-center">
+              <span>ไม่พบข้อมูล</span> 
+            </ion-col>
+          </ion-row>
+        </ion-card-content>
+      </ion-card>
+    </ion-content>
+ </div>
 
  <!--sidebar menu-->
   <ion-menu side="start" content-id="main-content">
     <ion-header>
-      <ion-toolbar translucent>
-        <ion-title>Menu</ion-title>
+      <ion-toolbar color="primary"><!--translucent-->
+        <ion-title style="margin-left: 15px;">Menu</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
       <ion-list>
         <ion-item  button (click)="selectMenu('ผลิตภัณฑ์เพื่อสุขภาพ ความงาม')">
-          <ion-icon name="mail" slot="start"></ion-icon><!--[routerLink]="'/fixtures/'+item.homeTeam+' - '+item.awayTeam"-->
-          <ion-label>ผลิตภัณฑ์เพื่อสุขภาพ ความงาม</ion-label>
+          <!--[routerLink]="'/fixtures/'+item.homeTeam+' - '+item.awayTeam"-->
+          <span>ผลิตภัณฑ์เพื่อสุขภาพ ความงาม</span> 
         </ion-item>
         <ion-item button (click)="selectMenu('เครื่องดื่ม ขนมขบเคี้ยว ของหวาน')">
-          <ion-icon name="paper-plane" slot="start"></ion-icon>
-          <ion-label>เครื่องดื่ม ขนมขบเคี้ยว ของหวาน</ion-label>
+          <span>เครื่องดื่ม ขนมขบเคี้ยว ของหวาน</span> 
         </ion-item>
         <ion-item button (click)="selectMenu('อาหารสด แช่เเข็ง เบเกอรี่')">
-          <ion-icon name="heart" slot="start"></ion-icon>
-          <ion-label>อาหารสด แช่เเข็ง เบเกอรี่</ion-label>
+          <span>อาหารสด แช่เเข็ง เบเกอรี่</span> 
         </ion-item>
         <ion-item button (click)="selectMenu('เครื่องใช้ไฟฟ้า อุปกรณ์ภายในบ้าน')">
-          <ion-icon name="archive" slot="start"></ion-icon>
-          <ion-label>เครื่องใช้ไฟฟ้า อุปกรณ์ภายในบ้าน</ion-label>
+          <span>เครื่องใช้ไฟฟ้า อุปกรณ์ภายในบ้าน</span> 
         </ion-item>
         <ion-item button (click)="selectMenu('ผลิตภัณฑ์สำหรับเด็ก')">
-          <ion-icon name="trash" slot="start"></ion-icon>
-          <ion-label>ผลิตภัณฑ์สำหรับเด็ก</ion-label>
+          <span>ผลิตภัณฑ์สำหรับเด็ก</span> 
         </ion-item>
         <ion-item button (click)="selectMenu('ผลิตภัณฑ์ทำความสะอาดในครัวเรือน')">
-          <ion-icon name="warning" slot="start"></ion-icon>
-          <ion-label>ผลิตภัณฑ์ทำความสะอาดในครัวเรือน</ion-label>
+          <span>ผลิตภัณฑ์ทำความสะอาดในครัวเรือน</span> 
         </ion-item>
         <ion-item button (click)="selectMenu('อาหารแห้ง อาหารกระป๋อง')">
-          <ion-icon name="warning" slot="start"></ion-icon>
-          <ion-label>อาหารแห้ง อาหารกระป๋อง</ion-label>
+          <span>อาหารแห้ง อาหารกระป๋อง</span> 
         </ion-item>
         <ion-item button (click)="selectMenu('ผลิตภัณฑ์สำหรับสัตว์เลี้ยง')">
-          <ion-icon name="warning" slot="start"></ion-icon>
-          <ion-label>ผลิตภัณฑ์สำหรับสัตว์เลี้ยง</ion-label>
+          <span>ผลิตภัณฑ์สำหรับสัตว์เลี้ยง</span> 
         </ion-item>
         <ion-item button (click)="selectMenu('สินค้าอื่นๆ')">
-          <ion-icon name="warning" slot="start"></ion-icon>
-          <ion-label>สินค้าอื่นๆ</ion-label>
+          <!--<ion-icon name="warning" slot="start"></ion-icon>-->
+          <!--<ion-label>สินค้าอื่นๆ</ion-label>-->
+          <span>สินค้าอื่นๆ</span> 
         </ion-item>
 
-        <ion-item>
+        <!--<ion-item>
           <ion-label>Gaming</ion-label>
           <ion-select interface="popover">
             <ion-select-option value="nes">NES</ion-select-option>
@@ -125,7 +129,8 @@
             <ion-select-option value="saturn">Sega Saturn</ion-select-option>
             <ion-select-option value="snes">SNES</ion-select-option>
           </ion-select>
-        </ion-item>
+        </ion-item>-->
+
       </ion-list>
     </ion-content>
   </ion-menu>

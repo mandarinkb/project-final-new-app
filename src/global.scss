@@ -34,3 +34,16 @@
     margin-top: 0px;
     margin-bottom: 5px;
   }
+
+/*add fonts */
+@font-face {
+  font-family: prompt-regular;
+  src: url(assets/fonts/Prompt-Regular.ttf) format("opentype");
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'prompt-regular', 'arial', sans-serif;
+}
+/*end add fonts */

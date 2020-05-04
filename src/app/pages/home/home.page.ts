@@ -26,13 +26,15 @@ export class HomePage implements OnInit {
   searchValue = '';
 
   modalValue: any = null;
+  haveData: boolean;
   constructor(public service: AllService,
               private menuController: MenuController,
               private router: Router,
               private platform: Platform,
               private loadingController: LoadingController,
-              public modalCtrl: ModalController
-  ) { }
+              public modalCtrl: ModalController) {
+                this.haveData = true;
+  }
 
   ngOnInit() {
     this.readItems();
@@ -41,8 +43,14 @@ export class HomePage implements OnInit {
     this.openloading();
     this.service.getItems().subscribe((res: Items[]) => {
       this.service.listItems = res;
+      // เช็คกรณีไม่พบข้อมูล
+      if (res.length === 0) {
+        this.haveData = false;
+      }
+
       this.closeloading();
     }, err => {
+      this.haveData = false;
       this.closeloading();
     });
   }
@@ -55,9 +63,14 @@ export class HomePage implements OnInit {
     const jsonName = JSON.stringify(objName); // create json
     this.service.postName(jsonName).subscribe((res: Items[]) => {
       this.service.listItems = res;
-      this.isLoading = true;
+      // เช็คกรณีไม่พบข้อมูล
+      if (res.length === 0) {
+        this.haveData = false;
+      }
+
       this.closeloading();
     }, err => {
+      this.haveData = false;
       this.closeloading();
     });
   }
@@ -73,8 +86,14 @@ export class HomePage implements OnInit {
     const jsonName = JSON.stringify(objName); // create json
     this.service.postNameAndFilter(jsonName).subscribe((res: Items[]) => {
       this.service.listItems = res;
+      // เช็คกรณีไม่พบข้อมูล
+      if (res.length === 0) {
+        this.haveData = false;
+      }
+
       this.closeloading();
     }, err => {
+      this.haveData = false;
       this.closeloading();
     });
   }
@@ -87,8 +106,14 @@ export class HomePage implements OnInit {
     const jsonCategory = JSON.stringify(objCategory); // create json
     this.service.postCategory(jsonCategory).subscribe((res: Items[]) => {
       this.service.listItems = res;
+      // เช็คกรณีไม่พบข้อมูล
+      if (res.length === 0) {
+        this.haveData = false;
+      }
+
       this.closeloading();
     }, err => {
+      this.haveData = false;
       this.closeloading();
     });
   }
@@ -119,6 +144,7 @@ export class HomePage implements OnInit {
   }
 
   search() {
+    // กรณีช่อง search เป็นค่าว่าง
     if (this.searchValue !== '') {
       // กรณีใช้ filter
       if (this.modalValue !== null) {
@@ -129,7 +155,8 @@ export class HomePage implements OnInit {
         console.log('off filter');
         this.readName(this.searchValue);
       }
-    } else {
+    } else { // กรณีช่อง search มีค่า
+      this.haveData = true;
       this.readItems();
     }
     this.modalValue = null;
@@ -151,9 +178,10 @@ export class HomePage implements OnInit {
     return await this.menuController.open();
   }
 
-  redirect(pagename: string) {
+  /*redirect(pagename: string) {
     this.router.navigate([pagename]);
   }
+  */
   // ปิด app เมื่อกดปุ่ม back button
   ionViewDidEnter() {
     this.subscription = this.platform.backButton.subscribe(() => {

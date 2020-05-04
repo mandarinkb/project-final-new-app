@@ -39,13 +39,35 @@
     border-width: 16px 0 0 16px;
     border-color: transparent transparent transparent rgba(61,97,153,0.9);
   }
+  .discount-position{
+    margin-top: -18px;
+    margin-left: -21px;
+  }
+
   /*ราคาปัจจุบัน*/
   .price-text {
     font-size: 25px;
     color: red;
   }
-  /**/
-  .oprice-text {
+  /*ราคาเดิม*/
+  .original-price-text {
     font-size: 20px;
     text-decoration: line-through;
+  }
+  .img-icon{
+    width: 60px;
+    margin-top: 10px;
+  }
+
+  /*เพิ่มขนาดของ card (ไม่พบข้อมูล)*/
+  .card-custom{
+    height: 200px;
+  }
+  .card-text-center{
+    font-size: 20px;
+    margin-top: 50px;
+  }
+  /**/
+  .menu-position{
+    margin-left: 15px;
   }
