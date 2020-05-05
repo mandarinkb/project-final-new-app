@@ -11,8 +11,8 @@ export class AllService {
               private http: HttpClient) {
   }
     // item 50 desc
-    getItems() {
-      return this.http.get(this.rootUrl.rootURL + '/items', this.rootUrl.httpOptions);
+    getItems(fromValue) {
+      return this.http.get(this.rootUrl.rootURL + '/items?from=' + fromValue, this.rootUrl.httpOptions);
     }
 
     // category
@@ -33,6 +33,26 @@ export class AllService {
     // web name for filter search
     getWebName() {
       return this.http.get(this.rootUrl.rootURL + '/web-name', this.rootUrl.httpOptions);
+    }
+
+    // count item 50 desc
+    getcountItems() {
+      return this.http.get(this.rootUrl.rootURL + '/count-items', this.rootUrl.httpOptions);
+    }
+
+    // count category
+    postCountCategory(formData: any) {
+      return this.http.post(this.rootUrl.rootURL + '/count-category', formData, this.rootUrl.httpOptions);
+    }
+
+    // count name
+    postCountName(formData: any) {
+      return this.http.post(this.rootUrl.rootURL + '/count-name', formData, this.rootUrl.httpOptions);
+    }
+
+    // count name
+    postCountNameAndFilter(formData: any) {
+      return this.http.post(this.rootUrl.rootURL + '/count-name-and-filter', formData, this.rootUrl.httpOptions);
     }
 
 }

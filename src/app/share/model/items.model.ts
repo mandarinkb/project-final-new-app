@@ -7,4 +7,5 @@ export class Items {
     discount: string;
     category: string;
     productUrl: string;
+    count: number; // add
 }

@@ -20,7 +20,7 @@
     </ion-header>
 <!--content-->    
     <ion-content fullscreen *ngIf="haveData"><!--*ngIf="haveData"-->
-      <ion-card *ngFor="let item of service.listItems"><!--*ngFor="let item of listItem"-->
+      <ion-card *ngFor="let item of this.value"><!--service.listItems-->
         <ion-card-content>
           <ion-row class="discount-position">
             <ion-col size="12">
@@ -49,7 +49,6 @@
               <span>{{item.originalPrice}}</span> 
             </ion-col>
           </ion-row>
-
           <ion-row>
             <ion-col size="6">
               <div>
@@ -64,6 +63,13 @@
           </ion-row>
         </ion-card-content>
       </ion-card>
+
+      <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+        <ion-infinite-scroll-content
+          loadingSpinner="bubbles"
+          loadingText="Loading more data...">
+        </ion-infinite-scroll-content>
+      </ion-infinite-scroll>
     </ion-content>
 
     <ion-content fullscreen *ngIf="!haveData">

@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { MenuController, Platform, LoadingController, ModalController } from '@ionic/angular';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MenuController, Platform, LoadingController, ModalController, IonInfiniteScroll } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { SearchFilterPage } from '../modal/search-filter/search-filter.page';
 import { AllService } from 'src/app/share/service/all.service';
@@ -12,6 +12,7 @@ import { LocalStorageService } from 'src/app/share/service/local-storage.service
   styleUrls: ['./home.page.scss'],
 })
 export class HomePage implements OnInit {
+
   isLoading = false;
   subscription: any;
   image: string;
@@ -27,6 +28,11 @@ export class HomePage implements OnInit {
 
   modalValue: any = null;
   haveData: boolean;
+
+  maxFrom: number;
+  from = 0;
+
+  value =  [];
   constructor(public service: AllService,
               private menuController: MenuController,
               private router: Router,
@@ -37,21 +43,31 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
-    this.readItems();
+    this.readItems(this.from);
+    this.readCountItems();
   }
-  readItems() {
-    this.openloading();
-    this.service.getItems().subscribe((res: Items[]) => {
-      this.service.listItems = res;
-      // เช็คกรณีไม่พบข้อมูล
-      if (res.length === 0) {
-        this.haveData = false;
-      }
 
-      this.closeloading();
+  readCountItems() {
+    this.service.getcountItems().subscribe((res: Items[]) => {
+      for (const data of res) {
+        this.maxFrom = data.count;
+     }
+    }, err => {
+    });
+  }
+
+  readItems(f) {
+    // this.openloading();
+    this.service.getItems(f).subscribe((res: Items[]) => {
+      this.value = this.value.concat(res);  // เรียกมา add ใน item เรื่อยๆ
+      // เช็คกรณีไม่พบข้อมูล
+      /*if (res.length === 0) {
+        this.haveData = false;
+      }*/
+      // this.closeloading();
     }, err => {
       this.haveData = false;
-      this.closeloading();
+      // this.closeloading();
     });
   }
 
@@ -118,6 +134,18 @@ export class HomePage implements OnInit {
     });
   }
 
+  loadData(event) {
+    console.log('from value => ' + this.maxFrom);
+    this.from = this.from + 50; // เพิ่มทีละ 100 รายการ
+    this.readItems(this.from);
+    event.target.complete();
+
+    if (this.from > this.maxFrom) {
+      event.target.disabled = true;
+    }
+
+  }
+
   async openloading() {
     this.isLoading = true;
     return await this.loadingController.create({
@@ -157,7 +185,7 @@ export class HomePage implements OnInit {
       }
     } else { // กรณีช่อง search มีค่า
       this.haveData = true;
-      this.readItems();
+      this.readItems(0);  // ค่าเริ่มต้น
     }
     this.modalValue = null;
   }
