@@ -10,24 +10,24 @@ export class AllService {
   constructor(private rootUrl: UrlService ,
               private http: HttpClient) {
   }
-    // item 50 desc
+    // item desc
     getItems(fromValue) {
       return this.http.get(this.rootUrl.rootURL + '/items?from=' + fromValue, this.rootUrl.httpOptions);
     }
 
     // category
-    postCategory(formData: any) {
-      return this.http.post(this.rootUrl.rootURL + '/category', formData, this.rootUrl.httpOptions);
+    postCategory(formData: any, fromValue) {
+      return this.http.post(this.rootUrl.rootURL + '/category?from=' + fromValue, formData, this.rootUrl.httpOptions);
     }
 
     // name
-    postName(formData: any) {
-      return this.http.post(this.rootUrl.rootURL + '/name', formData, this.rootUrl.httpOptions);
+    postName(formData: any, fromValue) {
+      return this.http.post(this.rootUrl.rootURL + '/name?from=' + fromValue, formData, this.rootUrl.httpOptions);
     }
 
-        // name
-    postNameAndFilter(formData: any) {
-      return this.http.post(this.rootUrl.rootURL + '/name-and-filter', formData, this.rootUrl.httpOptions);
+    // name filter
+    postNameAndFilter(formData: any, fromValue) {
+      return this.http.post(this.rootUrl.rootURL + '/name-and-filter?from=' + fromValue, formData, this.rootUrl.httpOptions);
     }
 
     // web name for filter search

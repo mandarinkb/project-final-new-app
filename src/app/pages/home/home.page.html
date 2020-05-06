@@ -6,7 +6,7 @@
         <ion-buttons slot="start">
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title>Inbox</ion-title>
+        <ion-title>สินค้าลดราคา</ion-title>
       </ion-toolbar>
 <!--search-->
       <ion-toolbar color="dark">
@@ -19,8 +19,8 @@
       </ion-toolbar>
     </ion-header>
 <!--content-->    
-    <ion-content fullscreen *ngIf="haveData"><!--*ngIf="haveData"-->
-      <ion-card *ngFor="let item of this.value"><!--service.listItems-->
+    <ion-content fullscreen *ngIf="haveData">
+      <ion-card *ngFor="let item of this.itemValue">
         <ion-card-content>
           <ion-row class="discount-position">
             <ion-col size="12">
@@ -89,7 +89,7 @@
   <ion-menu side="start" content-id="main-content">
     <ion-header>
       <ion-toolbar color="primary"><!--translucent-->
-        <ion-title style="margin-left: 15px;">Menu</ion-title>
+        <ion-title style="margin-left: 15px;">เมนู</ion-title>
       </ion-toolbar>
     </ion-header>
     <ion-content>
@@ -124,18 +124,6 @@
           <!--<ion-label>สินค้าอื่นๆ</ion-label>-->
           <span>สินค้าอื่นๆ</span> 
         </ion-item>
-
-        <!--<ion-item>
-          <ion-label>Gaming</ion-label>
-          <ion-select interface="popover">
-            <ion-select-option value="nes">NES</ion-select-option>
-            <ion-select-option value="n64">Nintendo64</ion-select-option>
-            <ion-select-option value="ps">PlayStation</ion-select-option>
-            <ion-select-option value="genesis">Sega Genesis</ion-select-option>
-            <ion-select-option value="saturn">Sega Saturn</ion-select-option>
-            <ion-select-option value="snes">SNES</ion-select-option>
-          </ion-select>
-        </ion-item>-->
 
       </ion-list>
     </ion-content>
