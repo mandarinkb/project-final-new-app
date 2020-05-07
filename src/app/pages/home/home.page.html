@@ -6,7 +6,7 @@
         <ion-buttons slot="start">
           <ion-menu-button></ion-menu-button>
         </ion-buttons>
-        <ion-title>สินค้าลดราคา</ion-title>
+        <ion-title>{{title}}</ion-title>
       </ion-toolbar>
 <!--search-->
       <ion-toolbar color="dark">
@@ -64,10 +64,10 @@
         </ion-card-content>
       </ion-card>
 
-      <ion-infinite-scroll threshold="100px" (ionInfinite)="loadData($event)">
+      <ion-infinite-scroll threshold="10%" (ionInfinite)="loadData($event)">
         <ion-infinite-scroll-content
-          loadingSpinner="bubbles"
-          loadingText="Loading more data...">
+          loadingSpinner="crescent"
+          ><!--loadingText="Loading more data..."-->
         </ion-infinite-scroll-content>
       </ion-infinite-scroll>
     </ion-content>

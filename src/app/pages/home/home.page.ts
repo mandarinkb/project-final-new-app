@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { SearchFilterPage } from '../modal/search-filter/search-filter.page';
 import { AllService } from 'src/app/share/service/all.service';
 import { Items } from 'src/app/share/model/items.model';
+import { VirtualTimeScheduler } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -16,7 +17,7 @@ export class HomePage implements OnInit {
   searchValue = '';
   modalValue: any = null;
   haveData: boolean;
-  maxFrom: number;
+  // maxFrom: number;
   from = 0;
   addFrom = 50; // เพิ่มทีละ 50 รายการ
   itemValue = [];
@@ -28,6 +29,8 @@ export class HomePage implements OnInit {
   jsonNameAndFilter: any;
   jsonCategory: any;
 
+  categoryData: any;
+  title = 'สินค้าลดราคา';
   // เอาไว้เช็คเวลาทำงานครั้งแรก
   // isFirstSearch = true;
   // isFirstFilterSearch = true;
@@ -41,7 +44,7 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.readItems(this.from);
-    this.readCountItems();
+    // this.readCountItems();
   }
 
   // ค้นหา item(หน้า home)
@@ -65,7 +68,9 @@ export class HomePage implements OnInit {
 
   // ช่อง search
   search() {
+    this.haveData = true;
     this.from = 0;
+    // this.maxFrom = 0;
     this.itemValue = []; // reset ค่า item
     // กรณีช่อง search มีค่า
     if (this.searchValue !== '') {
@@ -94,7 +99,7 @@ export class HomePage implements OnInit {
       name: n
     };
     this.jsonName = JSON.stringify(objName); // create json
-    this.readCountName(this.jsonName); // นับ search by name
+    // this.readCountName(this.jsonName); // นับ search by name
     this.service.postName(this.jsonName, fromValue).subscribe((res: Items[]) => {
       this.itemValue = this.itemValue.concat(res);
       // เช็คกรณีไม่พบข้อมูล
@@ -120,7 +125,7 @@ export class HomePage implements OnInit {
       maxPrice: ma
     };
     this.jsonNameAndFilter = JSON.stringify(objName); // create json
-    this.readCountNameAndFilter(this.jsonNameAndFilter); // นับ search by name and filter
+    // this.readCountNameAndFilter(this.jsonNameAndFilter); // นับ search by name and filter
     this.service.postNameAndFilter(this.jsonNameAndFilter, fromValue).subscribe((res: Items[]) => {
       this.itemValue = this.itemValue.concat(res);
       // เช็คกรณีไม่พบข้อมูล
@@ -135,7 +140,10 @@ export class HomePage implements OnInit {
 
   // เลือกเมนู
   selectMenu(value) {
+    this.title = value;
+    this.haveData = true;
     this.from = 0;
+    // this.maxFrom = 0;
     this.itemValue = []; // reset ค่า item
     this.readCategory(value, this.from);
     this.menuController.close(); // close menu
@@ -152,9 +160,10 @@ export class HomePage implements OnInit {
       category: c
     };
     this.jsonCategory = JSON.stringify(objCategory); // create json
-    this.readCountCategory(this.jsonCategory ); // นับ menu
+    // this.readCountCategory(this.jsonCategory); // นับ menu
     this.service.postCategory(this.jsonCategory, fromValue).subscribe((res: Items[]) => {
       this.itemValue = this.itemValue.concat(res);
+      this.categoryData = res;
       // เช็คกรณีไม่พบข้อมูล
       /*if (res.length === 0) {
         this.haveData = false;
@@ -164,7 +173,7 @@ export class HomePage implements OnInit {
       this.haveData = false;
     });
   }
-
+/*
   // นับ item(หน้า home)
   readCountItems() {
     this.service.getcountItems().subscribe((res: Items[]) => {
@@ -177,12 +186,14 @@ export class HomePage implements OnInit {
 
   // นับ menu
   readCountCategory(c) {
-    this.service.postCountCategory(c).subscribe((res: Items[]) => {
-      for (const data of res) {
-        this.maxFrom = data.count;
-      }
-    }, err => {
-    });
+    setTimeout(() => {
+      this.service.postCountCategory(c).subscribe((res: Items[]) => {
+        for (const data of res) {
+          this.maxFrom = data.count;
+        }
+      }, err => {
+      });
+    }, 1000);
   }
 
   // นับ search by name
@@ -204,7 +215,7 @@ export class HomePage implements OnInit {
     }, err => {
     });
   }
-
+*/
   // modal search filter
   async searchFilter() {
     const modal = await this.modalCtrl.create({
@@ -219,44 +230,50 @@ export class HomePage implements OnInit {
 
   // สำหรับ infinite-scroll
   loadData(event) {
-    console.log('infinite-scroll loading');
-    if (this.isItem) {
-      console.log('from item value => ' + this.maxFrom);
-      this.from = this.from + this.addFrom;
-      this.readItems(this.from);
-      event.target.complete();
-      if (this.from > this.maxFrom) {
-        event.target.disabled = true;
+    console.log('categoryData =>' + this.categoryData.length);
+
+    setTimeout(() => {
+      console.log('infinite-scroll loading');
+      if (this.isItem) {
+        this.from = this.from + this.addFrom;
+        this.readItems(this.from);
+        event.target.complete();
+        /*if (this.from > this.maxFrom) {
+          event.target.disabled = true;
+        }
+        */
+      } else if (this.isSearch) {
+        this.from = this.from + this.addFrom;
+        const obj = JSON.parse(this.jsonName);
+        this.readName(obj.name, this.from);
+        event.target.complete();
+        /*if (this.from > this.maxFrom) {
+          event.target.disabled = true;
+        }
+        */
+      } else if (this.isSearchAndFilter) {
+        this.from = this.from + this.addFrom;
+        const obj = JSON.parse(this.jsonNameAndFilter);
+        this.readNameAndFilter(obj.name, obj.webName, obj.minPrice, obj.maxPrice, this.from);
+        event.target.complete();
+        /*if (this.from > this.maxFrom) {
+          event.target.disabled = true;
+        }
+        */
+      } else if (this.isMenu) {
+        this.from = this.from + this.addFrom;
+        const obj = JSON.parse(this.jsonCategory);
+        this.readCategory(obj.category, this.from);
+        event.target.complete();
+        /*if (this.from > this.maxFrom) {
+          event.target.disabled = true;
+        }
+        */
       }
-    } else if (this.isSearch) {
-      console.log('from search value => ' + this.maxFrom);
-      this.from = this.from + this.addFrom;
-      const obj = JSON.parse(this.jsonName);
-      this.readName(obj.name, this.from );
-      event.target.complete();
-      if (this.from > this.maxFrom) {
-        event.target.disabled = true;
-      }
-    } else if (this.isSearchAndFilter) {
-      console.log('from search and filter value => ' + this.maxFrom);
-      this.from = this.from + this.addFrom;
-      const obj = JSON.parse(this.jsonNameAndFilter);
-      this.readNameAndFilter(obj.name, obj.webName, obj.minPrice, obj.maxPrice, this.from);
-      event.target.complete();
-      if (this.from > this.maxFrom) {
-        event.target.disabled = true;
-      }
-    } else if (this.isMenu) {
-      console.log('from menu value => ' + this.maxFrom);
-      this.from = this.from + this.addFrom;
-      const obj = JSON.parse(this.jsonCategory);
-      this.readCategory(obj.category, this.from);
-      event.target.complete();
-      if (this.from > this.maxFrom) {
-        event.target.disabled = true;
-      }
-    }
+    }, 2000);
+
   }
+
 
   // pop up loading
   async openloading() {
