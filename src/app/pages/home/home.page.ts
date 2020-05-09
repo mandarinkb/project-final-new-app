@@ -229,8 +229,6 @@ export class HomePage implements OnInit {
 
   // สำหรับ infinite-scroll
   loadData(event) {
-    console.log('categoryData =>' + this.categoryData.length);
-
     setTimeout(() => {
       console.log('infinite-scroll loading');
       if (this.isItem) {
@@ -269,10 +267,9 @@ export class HomePage implements OnInit {
         }
         */
       }
-    }, 2000);
+    }, 1000);
 
   }
-
 
   // pop up loading
   async openloading() {
