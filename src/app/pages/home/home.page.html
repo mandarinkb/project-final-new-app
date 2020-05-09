@@ -9,7 +9,7 @@
         <ion-title>{{title}}</ion-title>
       </ion-toolbar>
 <!--search-->
-      <ion-toolbar color="dark">
+      <ion-toolbar color="light">
         <ion-searchbar [(ngModel)]="searchValue" (ionBlur)="search()"></ion-searchbar>
         <ion-buttons slot="end">
           <ion-button size="small" shape="round" color="medium" (click)="searchFilter()">
@@ -20,33 +20,38 @@
     </ion-header>
 <!--content-->    
     <ion-content fullscreen *ngIf="haveData">
+     
       <ion-card *ngFor="let item of this.itemValue">
-        <ion-card-content>
-          <ion-row class="discount-position">
+        <ion-card-header style="background-color: white">
+          <ion-row ><!--class="discount-position"-->
             <ion-col size="12">
               <div class="discount-tag">ส่วนลด {{item.discount}}%</div>
             </ion-col>
           </ion-row>
+        </ion-card-header>
+
+        <!--<img src="{{item.image}}" alt="ion">-->
+        <ion-card-content style="background-color: white;">
           <ion-row>
             <ion-col size="12">
               <img src="{{item.image}}" class = "center"/>
             </ion-col>
           </ion-row>
+        </ion-card-content>
+        <ion-card-content style="background-color: white;">
           <ion-row>
             <ion-col size="12">
               <ion-card-title>{{item.name}}</ion-card-title>
             </ion-col>
           </ion-row>
-          <ion-row>
-            <ion-col size="12" class="price-text">
-              <span>฿</span>
-              <span>{{item.price}}</span> 
+          <ion-row style="margin-top:15px;">
+            <ion-col size="12">
+              <div class="price-text">฿{{item.price}} &nbsp; &nbsp;</div>
+              <div class="original-price-text">฿{{item.originalPrice}}</div>
             </ion-col>
           </ion-row>
-          <ion-row>
-            <ion-col size="12" class="original-price-text"><!--style="font-size: 20px;text-decoration: line-through;"-->
-              <span>฿</span>
-              <span>{{item.originalPrice}}</span> 
+          <ion-row >
+            <ion-col size="12" >
             </ion-col>
           </ion-row>
           <ion-row>
@@ -55,7 +60,7 @@
                 <img src="{{item.icon}}" class="img-icon"/>
               </div>
             </ion-col>
-            <ion-col size="6">
+            <ion-col size="6" style="margin-top: 5px;">
               <div class="ion-text-right">
                 <ion-button color="primary" href="{{item.productUrl}}" target="_blank">ดูรายละเอียด</ion-button>
                 </div>
@@ -63,7 +68,7 @@
           </ion-row>
         </ion-card-content>
       </ion-card>
-
+   
       <ion-infinite-scroll threshold="10%" (ionInfinite)="loadData($event)">
         <ion-infinite-scroll-content
           loadingSpinner="crescent"
@@ -81,6 +86,7 @@
             </ion-col>
           </ion-row>
         </ion-card-content>
+
       </ion-card>
     </ion-content>
  </div>

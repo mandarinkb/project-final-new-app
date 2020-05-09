@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { SearchFilterPage } from '../modal/search-filter/search-filter.page';
 import { AllService } from 'src/app/share/service/all.service';
 import { Items } from 'src/app/share/model/items.model';
-import { VirtualTimeScheduler } from 'rxjs';
 
 @Component({
   selector: 'app-home',

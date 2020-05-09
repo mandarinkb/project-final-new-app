@@ -2,7 +2,7 @@
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 50%;
+    width: 75%;
   }
 
   .button-sm {
@@ -13,7 +13,7 @@
   .discount-tag {
     position: relative;
     float: left;
-    background-color: rgba(61,97,153,0.9);
+    background-color: rgba(189,11,69,0.9);/*rgba(61,97,153,0.9)*/
     font-size: 16px;
     color: #fff;
     text-transform: uppercase;
@@ -32,12 +32,12 @@
   .discount-tag:before {
     top: 0;
     border-width: 16px 16px 0 0;
-    border-color: rgba(61,97,153,0.9) transparent transparent transparent;
+    border-color: rgba(189,11,69,0.9) transparent transparent transparent;
   }
   .discount-tag:after {
     bottom: 0;
     border-width: 16px 0 0 16px;
-    border-color: transparent transparent transparent rgba(61,97,153,0.9);
+    border-color: transparent transparent transparent rgba(189,11,69,0.9);
   }
   .discount-position{
     margin-top: -18px;
@@ -48,11 +48,13 @@
   .price-text {
     font-size: 25px;
     color: red;
+    float: left;
   }
   /*ราคาเดิม*/
   .original-price-text {
     font-size: 20px;
     text-decoration: line-through;
+    margin-top: 3px;
   }
   .img-icon{
     width: 60px;
