@@ -34,7 +34,7 @@ export class AllService {
     getWebName() {
       return this.http.get(this.rootUrl.rootURL + '/web-name', this.rootUrl.httpOptions);
     }
-
+/*
     // count item 50 desc
     getcountItems() {
       return this.http.get(this.rootUrl.rootURL + '/count-items', this.rootUrl.httpOptions);
@@ -54,5 +54,5 @@ export class AllService {
     postCountNameAndFilter(formData: any) {
       return this.http.post(this.rootUrl.rootURL + '/count-name-and-filter', formData, this.rootUrl.httpOptions);
     }
-
+*/
 }
