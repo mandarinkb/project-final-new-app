@@ -8,4 +8,6 @@ export class Items {
     category: string;
     productUrl: string;
     count: number; // add
+    review: string;
+    ratingScore: string;
 }

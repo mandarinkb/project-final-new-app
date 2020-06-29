@@ -16,7 +16,6 @@ export class HomePage implements OnInit {
   searchValue = '';
   modalValue: any = null;
   haveData: boolean;
-  // maxFrom: number;
   from = 0;
   addFrom = 50; // เพิ่มทีละ 50 รายการ
   itemValue = [];
@@ -27,12 +26,8 @@ export class HomePage implements OnInit {
   jsonName: any;
   jsonNameAndFilter: any;
   jsonCategory: any;
-
   categoryData: any;
   title = 'สินค้าลดราคา';
-  // เอาไว้เช็คเวลาทำงานครั้งแรก
-  // isFirstSearch = true;
-  // isFirstFilterSearch = true;
   constructor(public service: AllService,
               private menuController: MenuController,
               private platform: Platform,
@@ -43,7 +38,14 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.readItems(this.from);
-    // this.readCountItems();
+  }
+  // แปลงเป็น ทศนิยม 1 ตำแหน่ง
+  str1decimal(str: string): string {
+    if (str === '-') {
+      return str;
+    } else {
+      return (Math.round(Number(str) * 100) / 100).toFixed(1);
+    }
   }
 
   // ค้นหา item(หน้า home)
@@ -52,14 +54,8 @@ export class HomePage implements OnInit {
     this.isSearch = false;
     this.isSearchAndFilter = false;
     this.isMenu = false;
-    // this.openloading();
     this.service.getItems(fromValue).subscribe((res: Items[]) => {
       this.itemValue = this.itemValue.concat(res);  // เรียกมา add ใน item เรื่อยๆ
-      // เช็คกรณีไม่พบข้อมูล
-      /*if (res.length === 0) {
-        this.haveData = false;
-      }
-      */
     }, err => {
       this.haveData = false;
     });
@@ -69,18 +65,18 @@ export class HomePage implements OnInit {
   search() {
     this.haveData = true;
     this.from = 0;
-    // this.maxFrom = 0;
     this.itemValue = []; // reset ค่า item
     // กรณีช่อง search มีค่า
     if (this.searchValue !== '') {
       // กรณีใช้ filter
       if (this.modalValue !== null) {
-        console.log('on filter');
+        // รับค่าที่ได้รับมาจาก modal filter
         this.readNameAndFilter(this.searchValue, this.modalValue.web,
-          this.modalValue.min, this.modalValue.max, this.from);
+        this.modalValue.min, this.modalValue.max, this.from);
+        this.searchValue = ''; // เคลียค่าในช่อง search
       } else {  // กรณีไม่ได้ใช้ filter
-        console.log('off filter');
         this.readName(this.searchValue, this.from);
+        this.searchValue = ''; // เคลียค่าในช่อง search
       }
     } else { // กรณีช่อง search ไม่มีค่า
       this.readItems(0);  // ค่าเริ่มต้น
@@ -98,14 +94,12 @@ export class HomePage implements OnInit {
       name: n
     };
     this.jsonName = JSON.stringify(objName); // create json
-    // this.readCountName(this.jsonName); // นับ search by name
     this.service.postName(this.jsonName, fromValue).subscribe((res: Items[]) => {
       this.itemValue = this.itemValue.concat(res);
-      // เช็คกรณีไม่พบข้อมูล
-      /*if (res.length === 0) {
+      // ค้นหาไม่พบให้แจ้งเตือน
+      if (res.length === 0 && fromValue === 0) {
         this.haveData = false;
       }
-      */
     }, err => {
       this.haveData = false;
     });
@@ -124,14 +118,12 @@ export class HomePage implements OnInit {
       maxPrice: ma
     };
     this.jsonNameAndFilter = JSON.stringify(objName); // create json
-    // this.readCountNameAndFilter(this.jsonNameAndFilter); // นับ search by name and filter
     this.service.postNameAndFilter(this.jsonNameAndFilter, fromValue).subscribe((res: Items[]) => {
       this.itemValue = this.itemValue.concat(res);
-      // เช็คกรณีไม่พบข้อมูล
-      /*if (res.length === 0) {
+      // ค้นหาไม่พบให้แจ้งเตือน
+      if (res.length === 0 && fromValue === 0) {
         this.haveData = false;
       }
-      */
     }, err => {
       this.haveData = false;
     });
@@ -142,7 +134,6 @@ export class HomePage implements OnInit {
     this.title = value;
     this.haveData = true;
     this.from = 0;
-    // this.maxFrom = 0;
     this.itemValue = []; // reset ค่า item
     this.readCategory(value, this.from);
     this.menuController.close(); // close menu
@@ -154,75 +145,25 @@ export class HomePage implements OnInit {
     this.isSearch = false;
     this.isSearchAndFilter = false;
     this.isMenu = true;
-    // this.openloading();
     const objCategory = {
       category: c
     };
     this.jsonCategory = JSON.stringify(objCategory); // create json
-    // this.readCountCategory(this.jsonCategory); // นับ menu
     this.service.postCategory(this.jsonCategory, fromValue).subscribe((res: Items[]) => {
       this.itemValue = this.itemValue.concat(res);
-      this.categoryData = res;
-      // เช็คกรณีไม่พบข้อมูล
-      /*if (res.length === 0) {
-        this.haveData = false;
-      }
-      */
+      // this.categoryData = res;
     }, err => {
       this.haveData = false;
     });
   }
-/*
-  // นับ item(หน้า home)
-  readCountItems() {
-    this.service.getcountItems().subscribe((res: Items[]) => {
-      for (const data of res) {
-        this.maxFrom = data.count;
-      }
-    }, err => {
-    });
-  }
-
-  // นับ menu
-  readCountCategory(c) {
-    setTimeout(() => {
-      this.service.postCountCategory(c).subscribe((res: Items[]) => {
-        for (const data of res) {
-          this.maxFrom = data.count;
-        }
-      }, err => {
-      });
-    }, 1000);
-  }
-
-  // นับ search by name
-  readCountName(n) {
-    this.service.postCountName(n).subscribe((res: Items[]) => {
-      for (const data of res) {
-        this.maxFrom = data.count;
-      }
-    }, err => {
-    });
-  }
-
-  // นับ search by name and filter
-  readCountNameAndFilter(nf) {
-    this.service.postCountNameAndFilter(nf).subscribe((res: Items[]) => {
-      for (const data of res) {
-        this.maxFrom = data.count;
-      }
-    }, err => {
-    });
-  }
-*/
   // modal search filter
   async searchFilter() {
     const modal = await this.modalCtrl.create({
-      component: SearchFilterPage
+      component: SearchFilterPage // อ้างอิงจาก modal filter
     });
     modal.onDidDismiss()
       .then((data) => {
-        this.modalValue = data.data;  // เซ็ตค่าที่รับจาก modal
+        this.modalValue = data.data;  // เซ็ตค่าที่รับจาก modal search filter
       });
     return await modal.present();
   }
@@ -231,46 +172,34 @@ export class HomePage implements OnInit {
   loadData(event) {
     setTimeout(() => {
       console.log('infinite-scroll loading');
+      // หน้าหลัก
       if (this.isItem) {
         this.from = this.from + this.addFrom;
         this.readItems(this.from);
         event.target.complete();
-        /*if (this.from > this.maxFrom) {
-          event.target.disabled = true;
-        }
-        */
+      // ค้นหา
       } else if (this.isSearch) {
         this.from = this.from + this.addFrom;
         const obj = JSON.parse(this.jsonName);
         this.readName(obj.name, this.from);
         event.target.complete();
-        /*if (this.from > this.maxFrom) {
-          event.target.disabled = true;
-        }
-        */
+        event.target.disabled = false;
+      // ค้นหาโดยใช้ filter
       } else if (this.isSearchAndFilter) {
         this.from = this.from + this.addFrom;
         const obj = JSON.parse(this.jsonNameAndFilter);
         this.readNameAndFilter(obj.name, obj.webName, obj.minPrice, obj.maxPrice, this.from);
         event.target.complete();
-        /*if (this.from > this.maxFrom) {
-          event.target.disabled = true;
-        }
-        */
+      // เลือกหมวดหมู่
       } else if (this.isMenu) {
         this.from = this.from + this.addFrom;
         const obj = JSON.parse(this.jsonCategory);
         this.readCategory(obj.category, this.from);
         event.target.complete();
-        /*if (this.from > this.maxFrom) {
-          event.target.disabled = true;
-        }
-        */
       }
     }, 1000);
-
   }
-
+/*
   // pop up loading
   async openloading() {
     this.isLoading = true;
@@ -292,7 +221,7 @@ export class HomePage implements OnInit {
     return await this.loadingController.dismiss().then(() => console.log('dismissed'));
   }
   // close pop up loading
-
+*/
   // ปิด app เมื่อกดปุ่ม back button
   ionViewDidEnter() {
     this.subscription = this.platform.backButton.subscribe(() => {
