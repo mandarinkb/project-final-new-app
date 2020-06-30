@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { SearchFilterPage } from '../modal/search-filter/search-filter.page';
 import { AllService } from 'src/app/share/service/all.service';
 import { Items } from 'src/app/share/model/items.model';
+import { LocalStorageService } from 'src/app/share/service/local-storage.service';
 
 @Component({
   selector: 'app-home',
@@ -28,16 +29,21 @@ export class HomePage implements OnInit {
   jsonCategory: any;
   categoryData: any;
   title = 'สินค้าลดราคา';
+
+
+  searchName: any = []; // ไว้เก็บค่า search ลง storage
   constructor(public service: AllService,
               private menuController: MenuController,
               private platform: Platform,
               private loadingController: LoadingController,
-              public modalCtrl: ModalController) {
+              public modalCtrl: ModalController,
+              public storage: LocalStorageService) {
     this.haveData = true;
   }
 
   ngOnInit() {
     this.readItems(this.from);
+
   }
   // แปลงเป็น ทศนิยม 1 ตำแหน่ง
   str1decimal(str: string): string {
@@ -62,7 +68,33 @@ export class HomePage implements OnInit {
   }
 
   // ช่อง search
-  search() {
+  // ประกาศเป็นแบบ async เพื่อใช้ await ได้
+  async search() {
+    // เพื่อให้ทำคำสั่ง await ก่อนแล้วทำคำสั่งอื่นต่อไป
+    await this.storage.getStorage('search').then((data: any) => {
+      this.searchName = data;
+    });
+
+    // fix bug
+    if (this.searchName === null) {
+      this.searchName = [];  // เซ็ทค่าเริ่มต้นลงไปเพื่อจะได้ไม่เกิด error กรณี this.searchName == null
+    }
+
+    if (this.searchName.length < 3) { // ถ้าข้อมูล history น้อยกว่า 3 รายการให้จัดเก็บเพิ่ม
+      this.searchName = this.searchName.concat(this.searchValue);  // มารวมกับค่า search ปัจจุบัน
+      this.storage.setStorage('search', this.searchName);
+    } else if (this.searchName.length === 3) { // ถ้าข้อมูล history เท่ากับ 3 รายการ
+      let searchItem = [];                     // ให้เอาข้อมูลตัวแรกออก แล้งจึงจัดเก็บเพิ่ม
+      // tslint:disable-next-line:prefer-for-of
+      for (let i = 0; i < this.searchName.length ; i++) {
+        if (i !== 0) { // ตัดค่าแรกออก
+          searchItem = searchItem.concat(this.searchName[i]);
+        }
+      }
+      searchItem = searchItem.concat(this.searchValue); // มารวมกับค่า search ปัจจุบัน
+      this.storage.setStorage('search', searchItem);
+    }
+
     this.haveData = true;
     this.from = 0;
     this.itemValue = []; // reset ค่า item

@@ -13,8 +13,7 @@ export class LocalStorageService {
   }
 
   getStorage(key: string) {
-    this.storage.get(key).then((data) => {this.dataStorage = data; });
-    return this.dataStorage;
+    return this.storage.get(key);
   }
 
   clearStorage() {
