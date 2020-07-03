@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MenuController, Platform, LoadingController, ModalController, IonInfiniteScroll } from '@ionic/angular';
-import { Router } from '@angular/router';
 import { SearchFilterPage } from '../modal/search-filter/search-filter.page';
 import { AllService } from 'src/app/share/service/all.service';
 import { Items } from 'src/app/share/model/items.model';
@@ -20,10 +19,13 @@ export class HomePage implements OnInit {
   from = 0;
   addFrom = 50; // เพิ่มทีละ 50 รายการ
   itemValue = [];
+
+  // เอาไว้เช็คตอนใช้ infinite-scroll
   isItem = false;
   isSearch = false;
   isSearchAndFilter = false;
   isMenu = false;
+
   jsonName: any;
   jsonNameAndFilter: any;
   jsonCategory: any;
@@ -31,7 +33,7 @@ export class HomePage implements OnInit {
   title = 'สินค้าลดราคา';
 
 
-  searchName: any = []; // ไว้เก็บค่า search ลง storage
+  historySearch: any = []; // ไว้เก็บค่า search ลง storage
   constructor(public service: AllService,
               private menuController: MenuController,
               private platform: Platform,
@@ -42,8 +44,7 @@ export class HomePage implements OnInit {
   }
 
   ngOnInit() {
-    this.readItems(this.from);
-
+    this.readHistory(this.from);
   }
   // แปลงเป็น ทศนิยม 1 ตำแหน่ง
   str1decimal(str: string): string {
@@ -54,13 +55,58 @@ export class HomePage implements OnInit {
     }
   }
 
-  // ค้นหา item(หน้า home)
-  readItems(fromValue) {
+  // ประกาศเป็นแบบ async เพื่อใช้ await ได้
+  async keepHistory() {
+    // เพื่อให้ทำคำสั่ง await ก่อนแล้วทำคำสั่งอื่นต่อไป
+    await this.storage.getStorage('search').then((data: any) => {
+      this.historySearch = data;
+    });
+    // fix bug
+    if (this.historySearch === null) {
+      this.historySearch = [];  // เซ็ทค่าเริ่มต้นลงไปเพื่อจะได้ไม่เกิด error กรณี this.searchName == null
+    }
+    if (this.historySearch.length < 3) { // ถ้าข้อมูล history น้อยกว่า 3 รายการให้จัดเก็บเพิ่ม
+      // ถ้าช่อง search ไม่ใช่ว่าง ให้เก็บข้อมูล
+      if (this.searchValue !== '') {
+        this.historySearch = this.historySearch.concat(this.searchValue);  // มารวมกับค่า search ปัจจุบัน
+        this.storage.setStorage('search', this.historySearch);
+      }
+    } else if (this.historySearch.length === 3) { // ถ้าข้อมูล history เท่ากับ 3 รายการ
+        // ถ้าช่อง search ไม่ใช่ว่าง ให้เก็บข้อมูล
+        if (this.searchValue !== '') {
+          let searchItem = [];                     // ให้เอาข้อมูลตัวแรกออก แล้งจึงจัดเก็บเพิ่ม
+          // tslint:disable-next-line:prefer-for-of
+          for (let i = 0; i < this.historySearch.length ; i++) {
+            if (i !== 0) { // ตัดค่าแรกออก
+              searchItem = searchItem.concat(this.historySearch[i]);
+            }
+          }
+          searchItem = searchItem.concat(this.searchValue); // มารวมกับค่า search ปัจจุบัน
+          this.storage.setStorage('search', searchItem);
+        }
+    }
+    this.searchValue = ''; // เคลียค่าในช่อง search
+  }
+
+  // แสดง history(หน้า home)
+  async readHistory(fromValue) {
+
     this.isItem = true;
     this.isSearch = false;
     this.isSearchAndFilter = false;
     this.isMenu = false;
-    this.service.getItems(fromValue).subscribe((res: Items[]) => {
+
+    let historyData;
+    await this.storage.getStorage('search').then((data: any) => {
+      historyData = data;
+    });
+
+    const obj = {history: historyData };
+    const  formHistory = JSON.stringify(obj);
+    console.log(formHistory);
+    console.log('form => ' + fromValue);
+
+    this.service.postHistory(formHistory, fromValue).subscribe((res: Items[]) => {
       this.itemValue = this.itemValue.concat(res);  // เรียกมา add ใน item เรื่อยๆ
     }, err => {
       this.haveData = false;
@@ -68,33 +114,7 @@ export class HomePage implements OnInit {
   }
 
   // ช่อง search
-  // ประกาศเป็นแบบ async เพื่อใช้ await ได้
-  async search() {
-    // เพื่อให้ทำคำสั่ง await ก่อนแล้วทำคำสั่งอื่นต่อไป
-    await this.storage.getStorage('search').then((data: any) => {
-      this.searchName = data;
-    });
-
-    // fix bug
-    if (this.searchName === null) {
-      this.searchName = [];  // เซ็ทค่าเริ่มต้นลงไปเพื่อจะได้ไม่เกิด error กรณี this.searchName == null
-    }
-
-    if (this.searchName.length < 3) { // ถ้าข้อมูล history น้อยกว่า 3 รายการให้จัดเก็บเพิ่ม
-      this.searchName = this.searchName.concat(this.searchValue);  // มารวมกับค่า search ปัจจุบัน
-      this.storage.setStorage('search', this.searchName);
-    } else if (this.searchName.length === 3) { // ถ้าข้อมูล history เท่ากับ 3 รายการ
-      let searchItem = [];                     // ให้เอาข้อมูลตัวแรกออก แล้งจึงจัดเก็บเพิ่ม
-      // tslint:disable-next-line:prefer-for-of
-      for (let i = 0; i < this.searchName.length ; i++) {
-        if (i !== 0) { // ตัดค่าแรกออก
-          searchItem = searchItem.concat(this.searchName[i]);
-        }
-      }
-      searchItem = searchItem.concat(this.searchValue); // มารวมกับค่า search ปัจจุบัน
-      this.storage.setStorage('search', searchItem);
-    }
-
+  search() {
     this.haveData = true;
     this.from = 0;
     this.itemValue = []; // reset ค่า item
@@ -103,25 +123,24 @@ export class HomePage implements OnInit {
       // กรณีใช้ filter
       if (this.modalValue !== null) {
         // รับค่าที่ได้รับมาจาก modal filter
-        this.readNameAndFilter(this.searchValue, this.modalValue.web,
-        this.modalValue.min, this.modalValue.max, this.from);
-        this.searchValue = ''; // เคลียค่าในช่อง search
+        this.readNameAndFilter(this.searchValue, this.modalValue.web, this.modalValue.min, this.modalValue.max, this.from);
       } else {  // กรณีไม่ได้ใช้ filter
         this.readName(this.searchValue, this.from);
-        this.searchValue = ''; // เคลียค่าในช่อง search
       }
     } else { // กรณีช่อง search ไม่มีค่า
-      this.readItems(0);  // ค่าเริ่มต้น
+      this.readHistory(0);  // ค่าเริ่มต้น
     }
     this.modalValue = null;
   }
 
   // search by name
   readName(n, fromValue) {
+
     this.isItem = false;
     this.isSearch = true;
     this.isSearchAndFilter = false;
     this.isMenu = false;
+
     const objName = {
       name: n
     };
@@ -132,6 +151,10 @@ export class HomePage implements OnInit {
       if (res.length === 0 && fromValue === 0) {
         this.haveData = false;
       }
+      // กรณีมีการค้นพบให้เก็บ history การค้นไว้
+      if (res.length !== 0) {
+        this.keepHistory();
+      }
     }, err => {
       this.haveData = false;
     });
@@ -139,10 +162,12 @@ export class HomePage implements OnInit {
 
   // search by name และใช้ filter search
   readNameAndFilter(n, wn, mi, ma, fromValue) {
+
     this.isItem = false;
     this.isSearch = false;
     this.isSearchAndFilter = true;
     this.isMenu = false;
+
     const objName = {
       name: n,
       webName: wn,
@@ -155,6 +180,10 @@ export class HomePage implements OnInit {
       // ค้นหาไม่พบให้แจ้งเตือน
       if (res.length === 0 && fromValue === 0) {
         this.haveData = false;
+      }
+      // กรณีมีการค้นพบให้เก็บ history การค้นไว้
+      if (res.length !== 0) {
+        this.keepHistory();
       }
     }, err => {
       this.haveData = false;
@@ -173,10 +202,12 @@ export class HomePage implements OnInit {
 
   // search by menu
   readCategory(c, fromValue) {
+
     this.isItem = false;
     this.isSearch = false;
     this.isSearchAndFilter = false;
     this.isMenu = true;
+
     const objCategory = {
       category: c
     };
@@ -207,7 +238,7 @@ export class HomePage implements OnInit {
       // หน้าหลัก
       if (this.isItem) {
         this.from = this.from + this.addFrom;
-        this.readItems(this.from);
+        this.readHistory(this.from);
         event.target.complete();
       // ค้นหา
       } else if (this.isSearch) {
@@ -231,29 +262,6 @@ export class HomePage implements OnInit {
       }
     }, 1000);
   }
-/*
-  // pop up loading
-  async openloading() {
-    this.isLoading = true;
-    return await this.loadingController.create({
-      message: 'Please wait...',
-      // duration: 5000,
-    }).then(data => {
-      data.present().then(() => {
-        console.log('open loading');
-        if (!this.isLoading) {
-          data.dismiss().then(() => console.log('close loading'));
-        }
-      });
-    });
-  }
-
-  async closeloading() {
-    this.isLoading = false;
-    return await this.loadingController.dismiss().then(() => console.log('dismissed'));
-  }
-  // close pop up loading
-*/
   // ปิด app เมื่อกดปุ่ม back button
   ionViewDidEnter() {
     this.subscription = this.platform.backButton.subscribe(() => {
