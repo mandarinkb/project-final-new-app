@@ -12,10 +12,12 @@ import { LocalStorageService } from 'src/app/share/service/local-storage.service
 })
 export class HomePage implements OnInit {
   isLoading = false;
+  haveData = true;
+
   subscription: any; // close app
   searchValue = '';
   modalValue: any = null;
-  haveData: boolean;
+
   from = 0;
   addFrom = 50; // เพิ่มทีละ 50 รายการ
   itemValue = [];
@@ -32,16 +34,12 @@ export class HomePage implements OnInit {
   categoryData: any;
   title = 'สินค้าลดราคา';
 
-
   historySearch: any = []; // ไว้เก็บค่า search ลง storage
   constructor(public service: AllService,
               private menuController: MenuController,
               private platform: Platform,
-              private loadingController: LoadingController,
               public modalCtrl: ModalController,
-              public storage: LocalStorageService) {
-    this.haveData = true;
-  }
+              public storage: LocalStorageService) {}
 
   ngOnInit() {
     this.readHistory(this.from);
@@ -103,8 +101,6 @@ export class HomePage implements OnInit {
 
     const obj = {history: historyData };
     const  formHistory = JSON.stringify(obj);
-    console.log(formHistory);
-    console.log('form => ' + fromValue);
 
     this.service.postHistory(formHistory, fromValue).subscribe((res: Items[]) => {
       this.itemValue = this.itemValue.concat(res);  // เรียกมา add ใน item เรื่อยๆ
@@ -135,7 +131,6 @@ export class HomePage implements OnInit {
 
   // search by name
   readName(n, fromValue) {
-
     this.isItem = false;
     this.isSearch = true;
     this.isSearchAndFilter = false;
@@ -162,7 +157,6 @@ export class HomePage implements OnInit {
 
   // search by name และใช้ filter search
   readNameAndFilter(n, wn, mi, ma, fromValue) {
-
     this.isItem = false;
     this.isSearch = false;
     this.isSearchAndFilter = true;
@@ -202,7 +196,6 @@ export class HomePage implements OnInit {
 
   // search by menu
   readCategory(c, fromValue) {
-
     this.isItem = false;
     this.isSearch = false;
     this.isSearchAndFilter = false;

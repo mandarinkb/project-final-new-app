@@ -7,7 +7,7 @@ export class Items {
     discount: string;
     category: string;
     productUrl: string;
-    count: number; // add
+    count: number; 
     review: string;
     ratingScore: string;
 }

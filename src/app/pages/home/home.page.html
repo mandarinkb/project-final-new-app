@@ -23,14 +23,12 @@
      
       <ion-card *ngFor="let item of this.itemValue">
         <ion-card-header style="background-color: white">
-          <ion-row ><!--class="discount-position"-->
+          <ion-row >
             <ion-col size="12">
               <div class="discount-tag">ส่วนลด {{item.discount}}%</div>
             </ion-col>
           </ion-row>
         </ion-card-header>
-
-        <!--<img src="{{item.image}}" alt="ion">-->
         <ion-card-content style="background-color: white;">
           <ion-row>
             <ion-col size="12">
@@ -72,9 +70,7 @@
       </ion-card>
    
       <ion-infinite-scroll threshold="10%" (ionInfinite)="loadData($event)">
-        <ion-infinite-scroll-content
-          loadingSpinner="crescent"
-          ><!--loadingText="Loading more data..."-->
+        <ion-infinite-scroll-content loadingSpinner="crescent">
         </ion-infinite-scroll-content>
       </ion-infinite-scroll>
     </ion-content>
@@ -88,7 +84,6 @@
             </ion-col>
           </ion-row>
         </ion-card-content>
-
       </ion-card>
     </ion-content>
  </div>
@@ -103,7 +98,6 @@
     <ion-content>
       <ion-list>
         <ion-item  button (click)="selectMenu('เครื่องใช้ไฟฟ้าและอุปกรณ์อิเล็กทรอนิกส์')">
-          <!--[routerLink]="'/fixtures/'+item.homeTeam+' - '+item.awayTeam"-->
           <span>เครื่องใช้ไฟฟ้าและอุปกรณ์อิเล็กทรอนิกส์</span> 
         </ion-item>
         <ion-item button (click)="selectMenu('เครื่องเขียนและอุปกรณ์สำนักงาน')">
@@ -133,9 +127,7 @@
         <ion-item button (click)="selectMenu('เสื้อผ้าและเครื่องแต่งกาย')">
           <span>เสื้อผ้าและเครื่องแต่งกาย</span> 
         </ion-item>
-
       </ion-list>
     </ion-content>
   </ion-menu>
-
 <!--</ion-app>-->
