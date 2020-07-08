@@ -10,7 +10,14 @@
       </ion-toolbar>
 <!--search-->
       <ion-toolbar color="light">
-        <ion-searchbar [(ngModel)]="searchValue" (ionBlur)="search()"></ion-searchbar>
+        <ion-searchbar [(ngModel)]="searchValue" (ionBlur)="search()" (ionFocus)="focus()" ></ion-searchbar>
+        
+        <ion-buttons slot="end" *ngIf="isFocus">
+          <ion-button size="small" shape="round" color="medium">
+            <ion-icon name="search"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+
         <ion-buttons slot="end">
           <ion-button size="small" shape="round" color="medium" (click)="searchFilter()">
             <ion-icon name="options"></ion-icon>
@@ -48,7 +55,7 @@
               <div class="original-price-text">฿{{item.originalPrice}}</div>
             </ion-col>
           </ion-row>
-          <ion-row >
+          <ion-row *ngIf="item.ratingScore !== '-'">
             <ion-col size="12">
               <img src="../assets/images/star.png" style="width: 20px; height: 20px;float: left;margin-top: 3px;"/>
               <p style="font-size: 20px;">&nbsp; {{this.str1decimal(item.ratingScore)}}/5 &nbsp;({{item.review}})</p>

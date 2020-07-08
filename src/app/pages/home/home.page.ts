@@ -34,6 +34,7 @@ export class HomePage implements OnInit {
   categoryData: any;
   title = 'สินค้าลดราคา';
 
+  isFocus = false;
   historySearch: any = []; // ไว้เก็บค่า search ลง storage
   constructor(public service: AllService,
               private menuController: MenuController,
@@ -108,12 +109,17 @@ export class HomePage implements OnInit {
       this.haveData = false;
     });
   }
+  focus() {
+    this.isFocus = true;
+  }
 
   // ช่อง search
   search() {
+    this.isFocus = false;
     this.haveData = true;
     this.from = 0;
     this.itemValue = []; // reset ค่า item
+    console.log(this.searchValue);
     // กรณีช่อง search มีค่า
     if (this.searchValue !== '') {
       // กรณีใช้ filter
