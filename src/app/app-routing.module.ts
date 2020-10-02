@@ -9,14 +9,8 @@ const routes: Routes = [
   },
   { path: 'home', loadChildren: './pages/home/home.module#HomePageModule' },
   { path: 'search-filter', loadChildren: './pages/modal/search-filter/search-filter.module#SearchFilterPageModule' },
-  /*{ path: 'home', loadChildren: './pages/home/home.module#HomePageModule' }
-  { path: 'results', loadChildren: './pages/results/results.module#ResultsPageModule' },
-  { path: 'fixtures/:id', loadChildren: './pages/fixtures/fixtures.module#FixturesPageModule' },
-  { path: 'team/:league', loadChildren: './pages/teams/teams.module#TeamsPageModule' },
+  { path: 'setting', loadChildren: './pages/setting/setting.module#SettingPageModule' },
   { path: 'about', loadChildren: './pages/about/about.module#AboutPageModule' },
-  { path: 'team-detail/:team', loadChildren: './pages/team-detail/team-detail.module#TeamDetailPageModule' },
-  { path: 'players-detail/:player', loadChildren: './pages/players-detail/players-detail.module#PlayersDetailPageModule' },
-*/
 ];
 @NgModule({
   imports: [

@@ -4,6 +4,8 @@ import { SearchFilterPage } from '../modal/search-filter/search-filter.page';
 import { AllService } from 'src/app/share/service/all.service';
 import { Items } from 'src/app/share/model/items.model';
 import { LocalStorageService } from 'src/app/share/service/local-storage.service';
+import { SettingPage } from '../setting/setting.page';
+import { AboutPage } from '../about/about.page';
 
 @Component({
   selector: 'app-home',
@@ -36,6 +38,8 @@ export class HomePage implements OnInit {
 
   isFocus = false;
   historySearch: any = []; // ไว้เก็บค่า search ลง storage
+
+  isRemainder: any;
   constructor(public service: AllService,
               private menuController: MenuController,
               private platform: Platform,
@@ -229,6 +233,29 @@ export class HomePage implements OnInit {
       });
     return await modal.present();
   }
+  // modal setting
+  async setting() {
+    const modal = await this.modalCtrl.create({
+      component: SettingPage // อ้างอิงจาก modal filter
+    });
+    modal.onDidDismiss().then((data) => {
+      console.log(data);
+    });
+    return await modal.present();
+  }
+    // modal about
+    async about() {
+      const modal = await this.modalCtrl.create({
+        component: AboutPage // อ้างอิงจาก AboutPage
+      });
+      modal.onDidDismiss().then((data) => {
+        console.log(data);
+      });
+      return await modal.present();
+    }
+
+
+
 
   // สำหรับ infinite-scroll
   loadData(event) {

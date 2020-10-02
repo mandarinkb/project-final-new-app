@@ -11,6 +11,8 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SearchFilterPageModule } from './pages/modal/search-filter/search-filter.module';
 import { IonicStorageModule } from '@ionic/storage';
+import { SettingPageModule } from './pages/setting/setting.module';
+import { AboutPageModule } from './pages/about/about.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -20,6 +22,8 @@ import { IonicStorageModule } from '@ionic/storage';
             AppRoutingModule,
             HttpClientModule,
             SearchFilterPageModule,
+            SettingPageModule,
+            AboutPageModule,
             IonicStorageModule.forRoot()],
   providers: [
     StatusBar,
