@@ -6,13 +6,13 @@
         </ion-button>
     </ion-buttons>
     <ion-title>
-    	setting
+    	ตั้งค่าหมวดหมู่
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-list *ngFor="let item of this.data">
+  <ion-list *ngFor="let item of this.ListWebNameStorage">
     <ion-item>
       <ion-label>{{item.webName}}</ion-label>
       <ion-toggle slot="end" name="tertiary" color="success" [(ngModel)]="item.status"  [checked]="item.status" (ionChange)="onChanged($event,item.webName)"></ion-toggle>

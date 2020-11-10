@@ -40,6 +40,8 @@ export class HomePage implements OnInit {
   historySearch: any = []; // ไว้เก็บค่า search ลง storage
 
   isRemainder: any;
+  ListWebNameStorage: any;
+  listWebNameDatabase: any;
   constructor(public service: AllService,
               private menuController: MenuController,
               private platform: Platform,
@@ -48,7 +50,88 @@ export class HomePage implements OnInit {
 
   ngOnInit() {
     this.readHistory(this.from);
+    this.checkWebInStorage();
   }
+
+  async checkWebInStorage() {
+    console.log('hello start app');
+    await this.getWebNameDatabase();
+    await this.getWebNameStorage();
+    // กรณีไม่มีค่าในแอพ storage (เปิดใช้งานครั้งแรก) ให้บันทึกชื่อเว็บไว้
+    if (this.ListWebNameStorage === null) {
+      const newData: any = [];
+      console.log('storage is empty');
+      for (const webNameDatabase of this.listWebNameDatabase) {
+        const obj = {
+          webName: webNameDatabase.webName,
+          status: 1
+        };
+        newData.push(obj);
+      }
+      this.storage.setStorage('web', newData);
+      console.log(newData);
+    } else { // กรณีที่มีค่าใน storage
+      // กรณี web database มีข้อมูล web ใหม่มา
+      if (this.listWebNameDatabase.length >= this.ListWebNameStorage.length) {
+        const newWeb: any = [];
+        for (const item of this.listWebNameDatabase) {
+          let statusNewWeb = false;
+          for (const itemStorage of this.ListWebNameStorage) {
+            if (item.webName === itemStorage.webName) {
+              const originalWeb = {
+                webName: itemStorage.webName,
+                status: itemStorage.status
+              };
+              newWeb.push(originalWeb);
+              statusNewWeb = true;
+            }
+          }
+          // แสดง ชื่อเว็บใหม่มา
+          if (!statusNewWeb) {
+            console.log(item.webName);
+            const addNewWeb = {
+              webName: item.webName,
+              status: 1
+            };
+            newWeb.push(addNewWeb);
+          }
+        }
+        await this.storage.setStorage('web', newWeb); // เพิ่มชื่อเว็บเข้าไป
+        // กรณีข้อมูลใน storage เป็นข้อมูลเก่าให้ลบทิ้ง
+      } else if (this.listWebNameDatabase.length < this.ListWebNameStorage.length) {
+        const oldWeb: any = [];
+        for (const itemStorage of this.ListWebNameStorage) {
+          for (const itemDatabase of this.listWebNameDatabase) {
+            if (itemStorage.webName === itemDatabase.webName) {
+              const originalWeb = {
+                webName: itemStorage.webName,
+                status: itemStorage.status
+              };
+              oldWeb.push(originalWeb);
+            }
+          }
+        }
+        await this.storage.setStorage('web', oldWeb); // ลบชื่อเว็บ
+      }
+    }
+  }
+
+  async getWebNameStorage() {
+    await this.storage.getStorage('web').then((data: any) => {
+      this.ListWebNameStorage = data;
+      // console.log(data);
+    });
+  }
+  async getWebNameDatabase() {
+    await this.service.getWebName().subscribe((res) => {
+      this.listWebNameDatabase = res;
+      // console.log(res);
+    }, err => {
+      console.log(err);
+    });
+  }
+
+
   // แปลงเป็น ทศนิยม 1 ตำแหน่ง
   str1decimal(str: string): string {
     if (str === '-') {
@@ -123,7 +206,7 @@ export class HomePage implements OnInit {
     this.haveData = true;
     this.from = 0;
     this.itemValue = []; // reset ค่า item
-    console.log(this.searchValue);
+    // console.log(this.searchValue);
     // กรณีช่อง search มีค่า
     if (this.searchValue !== '') {
       // กรณีใช้ filter
@@ -205,16 +288,28 @@ export class HomePage implements OnInit {
   }
 
   // search by menu
-  readCategory(c, fromValue) {
+  async readCategory(c, fromValue) {
+    await this.getWebNameStorage();
+
+    const webNameValue: any = [];
+    for (const webNameStorage of this.ListWebNameStorage) {
+      if (webNameStorage.status) {
+        webNameValue.push(webNameStorage.webName);
+      }
+    }
+    console.log(webNameValue);
+
     this.isItem = false;
     this.isSearch = false;
     this.isSearchAndFilter = false;
     this.isMenu = true;
 
     const objCategory = {
-      category: c
+      category: c ,
+      webName: webNameValue
     };
     this.jsonCategory = JSON.stringify(objCategory); // create json
+    console.log(this.jsonCategory);
     this.service.postCategory(this.jsonCategory, fromValue).subscribe((res: Items[]) => {
       this.itemValue = this.itemValue.concat(res);
       // this.categoryData = res;
@@ -239,7 +334,7 @@ export class HomePage implements OnInit {
       component: SettingPage // อ้างอิงจาก modal filter
     });
     modal.onDidDismiss().then((data) => {
-      console.log(data);
+      // console.log(data);
     });
     return await modal.present();
   }
@@ -249,7 +344,7 @@ export class HomePage implements OnInit {
         component: AboutPage // อ้างอิงจาก AboutPage
       });
       modal.onDidDismiss().then((data) => {
-        console.log(data);
+        // console.log(data);
       });
       return await modal.present();
     }
@@ -260,7 +355,7 @@ export class HomePage implements OnInit {
   // สำหรับ infinite-scroll
   loadData(event) {
     setTimeout(() => {
-      console.log('infinite-scroll loading');
+      // console.log('infinite-scroll loading');
       // หน้าหลัก
       if (this.isItem) {
         this.from = this.from + this.addFrom;
