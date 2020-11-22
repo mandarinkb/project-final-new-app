@@ -42,6 +42,8 @@ export class HomePage implements OnInit {
   isRemainder: any;
   ListWebNameStorage: any;
   listWebNameDatabase: any;
+
+  statusUserId: boolean;
   constructor(public service: AllService,
               private menuController: MenuController,
               private platform: Platform,
@@ -51,10 +53,10 @@ export class HomePage implements OnInit {
   ngOnInit() {
     this.readHistory(this.from);
     this.checkWebInStorage();
+    this.checkUserIdInStorage();
   }
 
   async checkWebInStorage() {
-    console.log('hello start app');
     await this.getWebNameDatabase();
     await this.getWebNameStorage();
     // กรณีไม่มีค่าในแอพ storage (เปิดใช้งานครั้งแรก) ให้บันทึกชื่อเว็บไว้
@@ -131,6 +133,34 @@ export class HomePage implements OnInit {
     });
   }
 
+  async checkUserIdInStorage() {
+    await this.getUserIdInStorage();
+    console.log(this.statusUserId);
+    if (this.statusUserId) {
+      this.createUserId();
+    }
+  }
+
+  async getUserIdInStorage() {
+    await this.storage.getStorage('userId').then((data: any) => {
+     if (data === null) {
+      this.statusUserId = true;
+     } else {
+      this.statusUserId = false;
+     }
+    });
+  }
+  // สร้าง user id
+  createUserId() {
+    let result             = '';
+    const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for ( let i = 0; i < 5; i++ ) { // สร้าง 5 ตัวอักษร
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    // return result;
+    this.storage.setStorage('userId', result);
+  }
 
   // แปลงเป็น ทศนิยม 1 ตำแหน่ง
   str1decimal(str: string): string {
@@ -394,4 +424,9 @@ export class HomePage implements OnInit {
     this.subscription.unsubscribe();
   }
   // end function ปิด app เมื่อกดปุ่ม back button
+
+
 }
+
+
+
