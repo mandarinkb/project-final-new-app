@@ -44,6 +44,7 @@ export class HomePage implements OnInit {
   listWebNameDatabase: any;
 
   statusUserId: boolean;
+  userIdFromStorage: string;
   constructor(public service: AllService,
               private menuController: MenuController,
               private platform: Platform,
@@ -146,6 +147,7 @@ export class HomePage implements OnInit {
      if (data === null) {
       this.statusUserId = true;
      } else {
+      this.userIdFromStorage = data;
       this.statusUserId = false;
      }
     });
@@ -253,13 +255,16 @@ export class HomePage implements OnInit {
   }
 
   // search by name
-  readName(n, fromValue) {
+  async readName(n, fromValue) {
     this.isItem = false;
     this.isSearch = true;
     this.isSearchAndFilter = false;
     this.isMenu = false;
 
+    await this.getUserIdInStorage();
+
     const objName = {
+      userId: this.userIdFromStorage,
       name: n
     };
     this.jsonName = JSON.stringify(objName); // create json
@@ -279,13 +284,16 @@ export class HomePage implements OnInit {
   }
 
   // search by name และใช้ filter search
-  readNameAndFilter(n, wn, mi, ma, fromValue) {
+  async readNameAndFilter(n, wn, mi, ma, fromValue) {
     this.isItem = false;
     this.isSearch = false;
     this.isSearchAndFilter = true;
     this.isMenu = false;
 
+    await this.getUserIdInStorage();
+
     const objName = {
+      userId: this.userIdFromStorage,
       name: n,
       webName: wn,
       minPrice: mi,
@@ -327,14 +335,16 @@ export class HomePage implements OnInit {
         webNameValue.push(webNameStorage.webName);
       }
     }
-    console.log(webNameValue);
 
     this.isItem = false;
     this.isSearch = false;
     this.isSearchAndFilter = false;
     this.isMenu = true;
 
+    await this.getUserIdInStorage();
+
     const objCategory = {
+      userId: this.userIdFromStorage,
       category: c ,
       webName: webNameValue
     };
@@ -379,9 +389,6 @@ export class HomePage implements OnInit {
       return await modal.present();
     }
 
-
-
-
   // สำหรับ infinite-scroll
   loadData(event) {
     setTimeout(() => {
@@ -424,8 +431,6 @@ export class HomePage implements OnInit {
     this.subscription.unsubscribe();
   }
   // end function ปิด app เมื่อกดปุ่ม back button
-
-
 }
 
 

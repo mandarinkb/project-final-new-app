@@ -6,14 +6,14 @@
         </ion-button>
     </ion-buttons>
     <ion-title>
-    	search filter
+    	ตัวกรองค้นหา
     </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content padding>
 	<ion-item>
-	  <ion-label class="fw500" color="dark">web name</ion-label>
-    <ion-select [(ngModel)]="webName" multiple="true" >
+	  <ion-label class="fw500" color="dark">เว็บ</ion-label>
+    <ion-select [(ngModel)]="webName" multiple="true" cancelText="ยกเลิก" okText="ตกลง">
       <div *ngFor="let item of listWebName">
         <ion-select-option value="{{item.webName}}">{{item.webName}}</ion-select-option>
       </div>
@@ -22,7 +22,7 @@
 
 	<ion-item margin-bottom>
 	  <ion-label class="no-margin-bottom">
-      <ion-text color="dark" class="fw500">min/max price:</ion-text>
+      <ion-text color="dark" class="fw500">ช่วงราคา</ion-text>
     </ion-label>
       <ion-range dualKnobs="true" [(ngModel)]="minmaxprice" min="0" max="1000" step="10" class="no-padding-top">
         <ion-label slot="start"><ion-text color="primary">฿ {{minmaxprice.lower}}</ion-text></ion-label>
@@ -30,5 +30,5 @@
       </ion-range>
 	</ion-item>
 
-	<ion-button expand="full" color="primary" (click)="closeModal()">choose filter</ion-button>
+	<ion-button expand="full" color="primary" (click)="closeModal()">ตกลง</ion-button>
 </ion-content>
