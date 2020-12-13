@@ -10,7 +10,7 @@
     </ion-toolbar>
     <!--search-->
     <ion-toolbar color="light">
-      <ion-searchbar [(ngModel)]="searchValue" (ionBlur)="search()" (ionFocus)="focus()"></ion-searchbar>
+      <ion-searchbar placeholder="ค้นหา" [(ngModel)]="searchValue" (ionBlur)="search()" (ionFocus)="focus()"></ion-searchbar>
 
       <ion-buttons slot="end" *ngIf="isFocus">
         <ion-button size="small" shape="round" color="medium">
