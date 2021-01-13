@@ -6,6 +6,7 @@ import { Items } from 'src/app/share/model/items.model';
 import { LocalStorageService } from 'src/app/share/service/local-storage.service';
 import { SettingPage } from '../setting/setting.page';
 import { AboutPage } from '../about/about.page';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -49,9 +50,11 @@ export class HomePage implements OnInit {
               private menuController: MenuController,
               private platform: Platform,
               public modalCtrl: ModalController,
-              public storage: LocalStorageService) {}
+              public storage: LocalStorageService,
+              private router: Router) {}
 
   ngOnInit() {
+    console.log('this.router.url', this.router.url);
     this.readHistory(this.from);
     this.checkWebInStorage();
     this.checkUserIdInStorage();
@@ -423,6 +426,7 @@ export class HomePage implements OnInit {
   // ปิด app เมื่อกดปุ่ม back button
   ionViewDidEnter() {
     this.subscription = this.platform.backButton.subscribe(() => {
+
       // tslint:disable-next-line:no-string-literal
       navigator['app'].exitApp();
     });
