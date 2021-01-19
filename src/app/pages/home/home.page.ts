@@ -50,86 +50,89 @@ export class HomePage implements OnInit {
               private menuController: MenuController,
               private platform: Platform,
               public modalCtrl: ModalController,
-              public storage: LocalStorageService,
-              private router: Router) {}
+              public storage: LocalStorageService) { }
 
   ngOnInit() {
-    console.log('this.router.url', this.router.url);
     this.readHistory(this.from);
     this.checkWebInStorage();
     this.checkUserIdInStorage();
   }
 
-  async checkWebInStorage() {
-    await this.getWebNameDatabase();
-    await this.getWebNameStorage();
-    // กรณีไม่มีค่าในแอพ storage (เปิดใช้งานครั้งแรก) ให้บันทึกชื่อเว็บไว้
-    if (this.ListWebNameStorage === null) {
-      const newData: any = [];
-      console.log('storage is empty');
-      for (const webNameDatabase of this.listWebNameDatabase) {
-        const obj = {
-          webName: webNameDatabase.webName,
-          status: 1
-        };
-        newData.push(obj);
-      }
-      this.storage.setStorage('web', newData);
-      console.log(newData);
-    } else { // กรณีที่มีค่าใน storage
-      // กรณี web database มีข้อมูล web ใหม่มา
-      if (this.listWebNameDatabase.length >= this.ListWebNameStorage.length) {
-        const newWeb: any = [];
-        for (const item of this.listWebNameDatabase) {
-          let statusNewWeb = false;
+  checkWebInStorage() {
+    this.getWebNameDatabase();
+    this.getWebNameStorage();
+    // หน่วงเวลา 1 วินาทีแล้วค่อยทำงาน
+    setTimeout(() => {
+      // กรณีไม่มีค่าในแอพ storage (เปิดใช้งานครั้งแรก) ให้บันทึกชื่อเว็บไว้
+      if (this.ListWebNameStorage === null) {
+        const newData: any = [];
+        console.log('storage is empty');
+        for (const webNameDatabase of this.listWebNameDatabase) {
+          const obj = {
+            webName: webNameDatabase.webName,
+            status: 1
+          };
+          newData.push(obj);
+        }
+        this.storage.setStorage('web', newData);
+        console.log(newData);
+      } else { // กรณีที่มีค่าใน storage
+        // กรณี web database มีข้อมูล web ใหม่มา
+        if (this.listWebNameDatabase.length >= this.ListWebNameStorage.length) {
+          const newWeb: any = [];
+          for (const item of this.listWebNameDatabase) {
+            let statusNewWeb = false;
+            for (const itemStorage of this.ListWebNameStorage) {
+              if (item.webName === itemStorage.webName) {
+                const originalWeb = {
+                  webName: itemStorage.webName,
+                  status: itemStorage.status
+                };
+                newWeb.push(originalWeb);
+                statusNewWeb = true;
+              }
+            }
+            // แสดง ชื่อเว็บใหม่มา
+            if (!statusNewWeb) {
+              console.log(item.webName);
+              const addNewWeb = {
+                webName: item.webName,
+                status: 1
+              };
+              newWeb.push(addNewWeb);
+            }
+          }
+          // await this.storage.setStorage('web', newWeb); // เพิ่มชื่อเว็บเข้าไป
+          this.storage.setStorage('web', newWeb); // เพิ่มชื่อเว็บเข้าไป
+          // กรณีข้อมูลใน storage เป็นข้อมูลเก่าให้ลบทิ้ง
+        } else if (this.listWebNameDatabase.length < this.ListWebNameStorage.length) {
+          const oldWeb: any = [];
           for (const itemStorage of this.ListWebNameStorage) {
-            if (item.webName === itemStorage.webName) {
-              const originalWeb = {
-                webName: itemStorage.webName,
-                status: itemStorage.status
-              };
-              newWeb.push(originalWeb);
-              statusNewWeb = true;
+            for (const itemDatabase of this.listWebNameDatabase) {
+              if (itemStorage.webName === itemDatabase.webName) {
+                const originalWeb = {
+                  webName: itemStorage.webName,
+                  status: itemStorage.status
+                };
+                oldWeb.push(originalWeb);
+              }
             }
           }
-          // แสดง ชื่อเว็บใหม่มา
-          if (!statusNewWeb) {
-            console.log(item.webName);
-            const addNewWeb = {
-              webName: item.webName,
-              status: 1
-            };
-            newWeb.push(addNewWeb);
-          }
+          // await this.storage.setStorage('web', oldWeb); // ลบชื่อเว็บ
+          this.storage.setStorage('web', oldWeb); // ลบชื่อเว็บ
         }
-        await this.storage.setStorage('web', newWeb); // เพิ่มชื่อเว็บเข้าไป
-        // กรณีข้อมูลใน storage เป็นข้อมูลเก่าให้ลบทิ้ง
-      } else if (this.listWebNameDatabase.length < this.ListWebNameStorage.length) {
-        const oldWeb: any = [];
-        for (const itemStorage of this.ListWebNameStorage) {
-          for (const itemDatabase of this.listWebNameDatabase) {
-            if (itemStorage.webName === itemDatabase.webName) {
-              const originalWeb = {
-                webName: itemStorage.webName,
-                status: itemStorage.status
-              };
-              oldWeb.push(originalWeb);
-            }
-          }
-        }
-        await this.storage.setStorage('web', oldWeb); // ลบชื่อเว็บ
       }
-    }
+    }, 1000);
   }
 
-  async getWebNameStorage() {
-    await this.storage.getStorage('web').then((data: any) => {
+  getWebNameStorage() {
+    this.storage.getStorage('web').then((data: any) => {
       this.ListWebNameStorage = data;
       // console.log(data);
     });
   }
-  async getWebNameDatabase() {
-    await this.service.getWebName().subscribe((res) => {
+  getWebNameDatabase() {
+    this.service.getWebName().subscribe((res) => {
       this.listWebNameDatabase = res;
       // console.log(res);
     }, err => {
@@ -139,7 +142,7 @@ export class HomePage implements OnInit {
 
   async checkUserIdInStorage() {
     await this.getUserIdInStorage();
-    console.log(this.statusUserId);
+    // console.log(this.statusUserId);
     if (this.statusUserId) {
       this.createUserId();
     }
@@ -147,21 +150,21 @@ export class HomePage implements OnInit {
 
   async getUserIdInStorage() {
     await this.storage.getStorage('userId').then((data: any) => {
-     if (data === null) {
-      this.statusUserId = true;
-     } else {
-      this.userIdFromStorage = data;
-      this.statusUserId = false;
-     }
+      if (data === null) {
+        this.statusUserId = true;
+      } else {
+        this.userIdFromStorage = data;
+        this.statusUserId = false;
+      }
     });
   }
   // สร้าง user id
   createUserId() {
-    let result             = '';
-    const characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
-    for ( let i = 0; i < 5; i++ ) { // สร้าง 5 ตัวอักษร
-       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    for (let i = 0; i < 5; i++) { // สร้าง 5 ตัวอักษร
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     // return result;
     this.storage.setStorage('userId', result);
@@ -193,18 +196,18 @@ export class HomePage implements OnInit {
         this.storage.setStorage('search', this.historySearch);
       }
     } else if (this.historySearch.length === 3) { // ถ้าข้อมูล history เท่ากับ 3 รายการ
-        // ถ้าช่อง search ไม่ใช่ว่าง ให้เก็บข้อมูล
-        if (this.searchValue !== '') {
-          let searchItem = [];                     // ให้เอาข้อมูลตัวแรกออก แล้งจึงจัดเก็บเพิ่ม
-          // tslint:disable-next-line:prefer-for-of
-          for (let i = 0; i < this.historySearch.length ; i++) {
-            if (i !== 0) { // ตัดค่าแรกออก
-              searchItem = searchItem.concat(this.historySearch[i]);
-            }
+      // ถ้าช่อง search ไม่ใช่ว่าง ให้เก็บข้อมูล
+      if (this.searchValue !== '') {
+        let searchItem = [];                     // ให้เอาข้อมูลตัวแรกออก แล้งจึงจัดเก็บเพิ่ม
+        // tslint:disable-next-line:prefer-for-of
+        for (let i = 0; i < this.historySearch.length; i++) {
+          if (i !== 0) { // ตัดค่าแรกออก
+            searchItem = searchItem.concat(this.historySearch[i]);
           }
-          searchItem = searchItem.concat(this.searchValue); // มารวมกับค่า search ปัจจุบัน
-          this.storage.setStorage('search', searchItem);
         }
+        searchItem = searchItem.concat(this.searchValue); // มารวมกับค่า search ปัจจุบัน
+        this.storage.setStorage('search', searchItem);
+      }
     }
     this.searchValue = ''; // เคลียค่าในช่อง search
   }
@@ -222,8 +225,8 @@ export class HomePage implements OnInit {
       historyData = data;
     });
 
-    const obj = {history: historyData };
-    const  formHistory = JSON.stringify(obj);
+    const obj = { history: historyData };
+    const formHistory = JSON.stringify(obj);
 
     this.service.postHistory(formHistory, fromValue).subscribe((res: Items[]) => {
       this.itemValue = this.itemValue.concat(res);  // เรียกมา add ใน item เรื่อยๆ
@@ -324,31 +327,32 @@ export class HomePage implements OnInit {
     this.haveData = true;
     this.from = 0;
     this.itemValue = []; // reset ค่า item
-    this.readCategory(value, this.from);
-    this.menuController.close(); // close menu
+    this.getWebNameStorage();
+    this.getUserIdInStorage();
+    // หน่วงเวลา 0.5 วิ เพื่อให้ดึงข้อมูลจาก storage มาก่อน
+    setTimeout(() => {
+      this.readCategory(value, this.from);
+      this.menuController.close(); // close menu
+    }, 500);
   }
 
   // search by menu
   async readCategory(c, fromValue) {
-    await this.getWebNameStorage();
-
+    // await this.getWebNameStorage();
     const webNameValue: any = [];
     for (const webNameStorage of this.ListWebNameStorage) {
       if (webNameStorage.status) {
         webNameValue.push(webNameStorage.webName);
       }
     }
-
     this.isItem = false;
     this.isSearch = false;
     this.isSearchAndFilter = false;
     this.isMenu = true;
-
-    await this.getUserIdInStorage();
-
+    // await this.getUserIdInStorage();
     const objCategory = {
       userId: this.userIdFromStorage,
-      category: c ,
+      category: c,
       webName: webNameValue
     };
     this.jsonCategory = JSON.stringify(objCategory); // create json
@@ -371,7 +375,7 @@ export class HomePage implements OnInit {
       });
     return await modal.present();
   }
-  // modal setting
+
   async setting() {
     const modal = await this.modalCtrl.create({
       component: SettingPage // อ้างอิงจาก modal filter
@@ -381,16 +385,17 @@ export class HomePage implements OnInit {
     });
     return await modal.present();
   }
-    // modal about
-    async about() {
-      const modal = await this.modalCtrl.create({
-        component: AboutPage // อ้างอิงจาก AboutPage
-      });
-      modal.onDidDismiss().then((data) => {
-        // console.log(data);
-      });
-      return await modal.present();
-    }
+
+  // modal about
+  async about() {
+    const modal = await this.modalCtrl.create({
+      component: AboutPage // อ้างอิงจาก AboutPage
+    });
+    modal.onDidDismiss().then((data) => {
+      // console.log(data);
+    });
+    return await modal.present();
+  }
 
   // สำหรับ infinite-scroll
   loadData(event) {
@@ -401,20 +406,20 @@ export class HomePage implements OnInit {
         this.from = this.from + this.addFrom;
         this.readHistory(this.from);
         event.target.complete();
-      // ค้นหา
+        // ค้นหา
       } else if (this.isSearch) {
         this.from = this.from + this.addFrom;
         const obj = JSON.parse(this.jsonName);
         this.readName(obj.name, this.from);
         event.target.complete();
         event.target.disabled = false;
-      // ค้นหาโดยใช้ filter
+        // ค้นหาโดยใช้ filter
       } else if (this.isSearchAndFilter) {
         this.from = this.from + this.addFrom;
         const obj = JSON.parse(this.jsonNameAndFilter);
         this.readNameAndFilter(obj.name, obj.webName, obj.minPrice, obj.maxPrice, this.from);
         event.target.complete();
-      // เลือกหมวดหมู่
+        // เลือกหมวดหมู่
       } else if (this.isMenu) {
         this.from = this.from + this.addFrom;
         const obj = JSON.parse(this.jsonCategory);
