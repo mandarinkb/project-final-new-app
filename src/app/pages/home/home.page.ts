@@ -46,6 +46,8 @@ export class HomePage implements OnInit {
 
   statusUserId: boolean;
   userIdFromStorage: string;
+
+  isOpenModal = false;
   constructor(public service: AllService,
               private menuController: MenuController,
               private platform: Platform,
@@ -373,7 +375,9 @@ export class HomePage implements OnInit {
       .then((data) => {
         this.modalValue = data.data;  // เซ็ตค่าที่รับจาก modal search filter
       });
-    return await modal.present();
+    return await modal.present().then(() => {
+      this.isOpenModal = true;
+   });
   }
 
   async setting() {
@@ -381,9 +385,10 @@ export class HomePage implements OnInit {
       component: SettingPage // อ้างอิงจาก modal filter
     });
     modal.onDidDismiss().then((data) => {
-      // console.log(data);
     });
-    return await modal.present();
+    return await modal.present().then(() => {
+      this.isOpenModal = true;
+   });
   }
 
   // modal about
@@ -392,9 +397,10 @@ export class HomePage implements OnInit {
       component: AboutPage // อ้างอิงจาก AboutPage
     });
     modal.onDidDismiss().then((data) => {
-      // console.log(data);
     });
-    return await modal.present();
+    return await modal.present().then(() => {
+      this.isOpenModal = true;
+   });
   }
 
   // สำหรับ infinite-scroll
@@ -431,9 +437,13 @@ export class HomePage implements OnInit {
   // ปิด app เมื่อกดปุ่ม back button
   ionViewDidEnter() {
     this.subscription = this.platform.backButton.subscribe(() => {
-
-      // tslint:disable-next-line:no-string-literal
-      navigator['app'].exitApp();
+      // กรณีไม่ได้เปิด modal ให้ปิดแอพ
+      if (!this.isOpenModal) {
+        // tslint:disable-next-line:no-string-literal
+        navigator['app'].exitApp();
+      } else {// กรณีเปิด modal ให้ปิด modal ก่อนปิดแอพ
+        this.isOpenModal = false;
+      }
     });
   }
   ionViewWillLeave() {
