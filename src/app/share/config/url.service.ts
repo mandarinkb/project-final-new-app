@@ -5,7 +5,7 @@ import { HttpHeaders, HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class UrlService {
-  readonly rootURL = 'http://10.10.10.127:9999/mobile'; // ram ip 10.6.9.190
+  readonly rootURL = 'http://10.10.10.127:9999/mobile'; // ip 10.10.10.127:9999
   readonly httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json'

@@ -386,9 +386,9 @@ export class HomePage implements OnInit {
     });
     modal.onDidDismiss().then((data) => {
     });
-    return await modal.present().then(() => {
+    return setTimeout(() => {modal.present().then(() => { // หน่วงเวลา 0.5 วินาทีเพื่อให้ดึงข้อมูลจาก storage มาก่อน
       this.isOpenModal = true;
-   });
+   }); }, 500);
   }
 
   // modal about

@@ -24,7 +24,6 @@ export class SettingPage implements OnInit {
   getWebNameStorage() {
     this.storage.getStorage('web').then((data: any) => {
       this.ListWebNameStorage = data;
-      // console.log(data);
     });
   }
 
