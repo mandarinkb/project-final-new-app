@@ -48,13 +48,16 @@ export class HomePage implements OnInit {
   userIdFromStorage: string;
 
   isOpenModal = false;
+  isPageLoading = false;
   constructor(public service: AllService,
               private menuController: MenuController,
               private platform: Platform,
               public modalCtrl: ModalController,
-              public storage: LocalStorageService) { }
+              public storage: LocalStorageService,
+              public loadingController: LoadingController) { }
 
   ngOnInit() {
+    this.present();
     this.readHistory(this.from);
     this.checkWebInStorage();
     this.checkUserIdInStorage();
@@ -232,8 +235,11 @@ export class HomePage implements OnInit {
 
     this.service.postHistory(formHistory, fromValue).subscribe((res: Items[]) => {
       this.itemValue = this.itemValue.concat(res);  // เรียกมา add ใน item เรื่อยๆ
+      this.dismiss();
     }, err => {
       this.haveData = false;
+
+      this.dismiss();
     });
   }
   focus() {
@@ -264,6 +270,7 @@ export class HomePage implements OnInit {
 
   // search by name
   async readName(n, fromValue) {
+    this.present();
     this.isItem = false;
     this.isSearch = true;
     this.isSearchAndFilter = false;
@@ -286,13 +293,16 @@ export class HomePage implements OnInit {
       if (res.length !== 0) {
         this.keepHistory();
       }
+      this.dismiss();
     }, err => {
       this.haveData = false;
+      this.dismiss();
     });
   }
 
   // search by name และใช้ filter search
   async readNameAndFilter(n, wn, mi, ma, fromValue) {
+    this.present();
     this.isItem = false;
     this.isSearch = false;
     this.isSearchAndFilter = true;
@@ -318,8 +328,10 @@ export class HomePage implements OnInit {
       if (res.length !== 0) {
         this.keepHistory();
       }
+      this.dismiss();
     }, err => {
       this.haveData = false;
+      this.dismiss();
     });
   }
 
@@ -340,6 +352,7 @@ export class HomePage implements OnInit {
 
   // search by menu
   async readCategory(c, fromValue) {
+    this.present();
     // await this.getWebNameStorage();
     const webNameValue: any = [];
     for (const webNameStorage of this.ListWebNameStorage) {
@@ -362,8 +375,10 @@ export class HomePage implements OnInit {
     this.service.postCategory(this.jsonCategory, fromValue).subscribe((res: Items[]) => {
       this.itemValue = this.itemValue.concat(res);
       // this.categoryData = res;
+      this.dismiss();
     }, err => {
       this.haveData = false;
+      this.dismiss();
     });
   }
   // modal search filter
@@ -450,6 +465,27 @@ export class HomePage implements OnInit {
     this.subscription.unsubscribe();
   }
   // end function ปิด app เมื่อกดปุ่ม back button
+
+  async present() {
+    this.isPageLoading = true;
+    return await this.loadingController.create({
+      cssClass: 'my-custom-class',
+      message: 'Please wait...'
+      // duration: 5000,
+    }).then(a => {
+      a.present().then(() => {
+        console.log('presented');
+        if (!this.isPageLoading) {
+          a.dismiss().then(() => console.log('abort presenting'));
+        }
+      });
+    });
+  }
+
+  async dismiss() {
+    this.isPageLoading = false;
+    return await this.loadingController.dismiss().then(() => console.log('dismissed'));
+  }
 }
 
 
