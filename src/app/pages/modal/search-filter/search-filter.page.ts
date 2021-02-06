@@ -9,7 +9,8 @@ import { AllService } from 'src/app/share/service/all.service';
 })
 export class SearchFilterPage implements OnInit {
   listWebName: any;
-  public webName: string;
+  public searchName = '';
+  public webName = '';
   public minmaxprice = {
     upper: 1000,
     lower: 0
@@ -21,6 +22,8 @@ export class SearchFilterPage implements OnInit {
   }
 
   ngOnInit() {
+    console.log(this.webName);
+    console.log(this.searchName);
   }
 
   closeModal() {
@@ -30,7 +33,13 @@ export class SearchFilterPage implements OnInit {
       web: this.webName
     };
     // ส่ง data เมื่อปิด modal
-    this.modalCtrl.dismiss(this.dataModal);
+    if (this.webName === '' || this.searchName === '') {
+      console.log('close modal without data');
+      this.modalCtrl.dismiss();
+    } else if (this.webName !== '' && this.searchName !== '') {
+      console.log(this.dataModal);
+      this.modalCtrl.dismiss(this.dataModal);
+    }
   }
 
   getWebName() {

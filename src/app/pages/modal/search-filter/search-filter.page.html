@@ -11,6 +11,7 @@
   </ion-toolbar>
 </ion-header>
 <ion-content padding>
+  <ion-searchbar [(ngModel)]="searchName" placeholder="ค้นหา"></ion-searchbar>
   <ion-item>
     <ion-label class="fw500" color="dark">เว็บไซต์</ion-label>
     <ion-select [(ngModel)]="webName" multiple="true" cancelText="ยกเลิก" okText="ตกลง">
@@ -40,6 +41,12 @@
     </ion-label>
   </ion-item>
   
-
-  <ion-button expand="full" color="primary" (click)="closeModal()">ตกลง</ion-button>
+  <div *ngIf="webName != '' && searchName != ''; then enable; else disable"></div><!-- -->
+  <ng-template #enable>
+    <ion-button expand="full" color="primary" (click)="closeModal()">ตกลง</ion-button>
+  </ng-template>
+  <ng-template #disable>
+    <ion-button [disabled]="true" expand="full" color="primary" (click)="closeModal()">ตกลง</ion-button>
+  </ng-template>
+  
 </ion-content>
