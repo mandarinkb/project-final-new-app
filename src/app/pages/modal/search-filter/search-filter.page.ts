@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController } from '@ionic/angular';
+import { Events, ModalController } from '@ionic/angular';
 import { AllService } from 'src/app/share/service/all.service';
 
 @Component({
@@ -9,35 +9,38 @@ import { AllService } from 'src/app/share/service/all.service';
 })
 export class SearchFilterPage implements OnInit {
   listWebName: any;
-  public searchName = '';
   public webName = '';
   public minmaxprice = {
     upper: 1000,
     lower: 0
   };
   dataModal: any;
+  isClickOk = false;
   constructor(private modalCtrl: ModalController,
               private service: AllService) {
     this.getWebName();
   }
 
   ngOnInit() {
-    console.log(this.webName);
-    console.log(this.searchName);
   }
 
+  clickClose() {
+    console.log('click-close');
+    this.isClickOk = true;
+  }
   closeModal() {
-    this.dataModal = {
-      min: this.minmaxprice.lower,
-      max: this.minmaxprice.upper,
-      web: this.webName
-    };
+
     // ส่ง data เมื่อปิด modal
-    if (this.webName === '' || this.searchName === '') {
+    if (this.webName === '' || !this.isClickOk) {
       console.log('close modal without data');
-      this.modalCtrl.dismiss();
-    } else if (this.webName !== '' && this.searchName !== '') {
-      console.log(this.dataModal);
+      this.modalCtrl.dismiss(null);
+    } else if (this.webName !== '' && this.isClickOk) { // กรณีเลือกชื่อเว็บ และ กดปุ่มok
+      // console.log(this.dataModal);
+      this.dataModal = {
+        min: this.minmaxprice.lower,
+        max: this.minmaxprice.upper,
+        web: this.webName
+      };
       this.modalCtrl.dismiss(this.dataModal);
     }
   }

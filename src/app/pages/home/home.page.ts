@@ -1,12 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MenuController, Platform, LoadingController, ModalController, IonInfiniteScroll } from '@ionic/angular';
+import { MenuController, Platform, LoadingController, ModalController, IonInfiniteScroll, Events } from '@ionic/angular';
 import { SearchFilterPage } from '../modal/search-filter/search-filter.page';
 import { AllService } from 'src/app/share/service/all.service';
 import { Items } from 'src/app/share/model/items.model';
 import { LocalStorageService } from 'src/app/share/service/local-storage.service';
 import { SettingPage } from '../setting/setting.page';
 import { AboutPage } from '../about/about.page';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -54,7 +53,8 @@ export class HomePage implements OnInit {
               private platform: Platform,
               public modalCtrl: ModalController,
               public storage: LocalStorageService,
-              public loadingController: LoadingController) { }
+              public loadingController: LoadingController,
+              public events: Events) { }
 
   ngOnInit() {
     this.present();
@@ -259,8 +259,12 @@ export class HomePage implements OnInit {
       if (this.modalValue !== null) {
         // รับค่าที่ได้รับมาจาก modal filter
         this.readNameAndFilter(this.searchValue, this.modalValue.web, this.modalValue.min, this.modalValue.max, this.from);
+        console.log('search filter');
+        this.title = this.searchValue;
       } else {  // กรณีไม่ได้ใช้ filter
         this.readName(this.searchValue, this.from);
+        console.log('search');
+        this.title = this.searchValue;
       }
     } else { // กรณีช่อง search ไม่มีค่า
       this.readHistory(0);  // ค่าเริ่มต้น
@@ -381,7 +385,7 @@ export class HomePage implements OnInit {
       this.dismiss();
     });
   }
-  // modal search filter
+  // modal search filter เมื่อปิด modal จะเรียกอัตโนมัติ
   async searchFilter() {
     const modal = await this.modalCtrl.create({
       component: SearchFilterPage // อ้างอิงจาก modal filter
@@ -474,9 +478,8 @@ export class HomePage implements OnInit {
       // duration: 5000,
     }).then(a => {
       a.present().then(() => {
-        console.log('presented');
         if (!this.isPageLoading) {
-          a.dismiss().then(() => console.log('abort presenting'));
+          a.dismiss().then(() => {});
         }
       });
     });
@@ -484,7 +487,7 @@ export class HomePage implements OnInit {
 
   async dismiss() {
     this.isPageLoading = false;
-    return await this.loadingController.dismiss().then(() => console.log('dismissed'));
+    return await this.loadingController.dismiss().then(() => {});
   }
 }
 
