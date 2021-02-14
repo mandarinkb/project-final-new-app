@@ -40,7 +40,7 @@ export class HomePage implements OnInit {
   historySearch: any = []; // ไว้เก็บค่า search ลง storage
 
   isRemainder: any;
-  ListWebNameStorage: any;
+  listWebNameStorage: any;
   listWebNameDatabase: any;
 
   statusUserId: boolean;
@@ -57,7 +57,7 @@ export class HomePage implements OnInit {
               public events: Events) { }
 
   ngOnInit() {
-    this.present();
+    this.loadingLeart();
     this.readHistory(this.from);
     this.checkWebInStorage();
     this.checkUserIdInStorage();
@@ -69,7 +69,7 @@ export class HomePage implements OnInit {
     // หน่วงเวลา 1 วินาทีแล้วค่อยทำงาน
     setTimeout(() => {
       // กรณีไม่มีค่าในแอพ storage (เปิดใช้งานครั้งแรก) ให้บันทึกชื่อเว็บไว้
-      if (this.ListWebNameStorage === null) {
+      if (this.listWebNameStorage === null) {
         const newData: any = [];
         console.log('storage is empty');
         for (const webNameDatabase of this.listWebNameDatabase) {
@@ -83,11 +83,11 @@ export class HomePage implements OnInit {
         console.log(newData);
       } else { // กรณีที่มีค่าใน storage
         // กรณี web database มีข้อมูล web ใหม่มา
-        if (this.listWebNameDatabase.length >= this.ListWebNameStorage.length) {
+        if (this.listWebNameDatabase.length >= this.listWebNameStorage.length) {
           const newWeb: any = [];
           for (const item of this.listWebNameDatabase) {
             let statusNewWeb = false;
-            for (const itemStorage of this.ListWebNameStorage) {
+            for (const itemStorage of this.listWebNameStorage) {
               if (item.webName === itemStorage.webName) {
                 const originalWeb = {
                   webName: itemStorage.webName,
@@ -110,9 +110,9 @@ export class HomePage implements OnInit {
           // await this.storage.setStorage('web', newWeb); // เพิ่มชื่อเว็บเข้าไป
           this.storage.setStorage('web', newWeb); // เพิ่มชื่อเว็บเข้าไป
           // กรณีข้อมูลใน storage เป็นข้อมูลเก่าให้ลบทิ้ง
-        } else if (this.listWebNameDatabase.length < this.ListWebNameStorage.length) {
+        } else if (this.listWebNameDatabase.length < this.listWebNameStorage.length) {
           const oldWeb: any = [];
-          for (const itemStorage of this.ListWebNameStorage) {
+          for (const itemStorage of this.listWebNameStorage) {
             for (const itemDatabase of this.listWebNameDatabase) {
               if (itemStorage.webName === itemDatabase.webName) {
                 const originalWeb = {
@@ -132,7 +132,7 @@ export class HomePage implements OnInit {
 
   getWebNameStorage() {
     this.storage.getStorage('web').then((data: any) => {
-      this.ListWebNameStorage = data;
+      this.listWebNameStorage = data;
       // console.log(data);
     });
   }
@@ -235,16 +235,16 @@ export class HomePage implements OnInit {
 
     this.service.postHistory(formHistory, fromValue).subscribe((res: Items[]) => {
       this.itemValue = this.itemValue.concat(res);  // เรียกมา add ใน item เรื่อยๆ
-      this.dismiss();
+      this.dismissLoadingAleart();
     }, err => {
       this.haveData = false;
 
-      this.dismiss();
+      this.dismissLoadingAleart();
     });
   }
-  focus() {
-    this.isFocus = true;
-  }
+  // focus() {
+  //   this.isFocus = true;
+  // }
 
   // ช่อง search
   search() {
@@ -274,7 +274,10 @@ export class HomePage implements OnInit {
 
   // search by name
   async readName(n, fromValue) {
-    this.present();
+    if (fromValue === 0) {
+      this.loadingLeart();
+    }
+
     this.isItem = false;
     this.isSearch = true;
     this.isSearchAndFilter = false;
@@ -297,16 +300,18 @@ export class HomePage implements OnInit {
       if (res.length !== 0) {
         this.keepHistory();
       }
-      this.dismiss();
+      this.dismissLoadingAleart();
     }, err => {
       this.haveData = false;
-      this.dismiss();
+      this.dismissLoadingAleart();
     });
   }
 
   // search by name และใช้ filter search
   async readNameAndFilter(n, wn, mi, ma, fromValue) {
-    this.present();
+    if (fromValue === 0) {
+      this.loadingLeart();
+    }
     this.isItem = false;
     this.isSearch = false;
     this.isSearchAndFilter = true;
@@ -332,10 +337,10 @@ export class HomePage implements OnInit {
       if (res.length !== 0) {
         this.keepHistory();
       }
-      this.dismiss();
+      this.dismissLoadingAleart();
     }, err => {
       this.haveData = false;
-      this.dismiss();
+      this.dismissLoadingAleart();
     });
   }
 
@@ -356,10 +361,12 @@ export class HomePage implements OnInit {
 
   // search by menu
   async readCategory(c, fromValue) {
-    this.present();
+    if (fromValue === 0) {
+      this.loadingLeart();
+    }
     // await this.getWebNameStorage();
     const webNameValue: any = [];
-    for (const webNameStorage of this.ListWebNameStorage) {
+    for (const webNameStorage of this.listWebNameStorage) {
       if (webNameStorage.status) {
         webNameValue.push(webNameStorage.webName);
       }
@@ -377,12 +384,16 @@ export class HomePage implements OnInit {
     this.jsonCategory = JSON.stringify(objCategory); // create json
     console.log(this.jsonCategory);
     this.service.postCategory(this.jsonCategory, fromValue).subscribe((res: Items[]) => {
+      console.log('category => ', res);
+      if (res.length === 0 && fromValue === 0) {
+        this.haveData = false;
+      }
       this.itemValue = this.itemValue.concat(res);
       // this.categoryData = res;
-      this.dismiss();
+      this.dismissLoadingAleart();
     }, err => {
       this.haveData = false;
-      this.dismiss();
+      this.dismissLoadingAleart();
     });
   }
   // modal search filter เมื่อปิด modal จะเรียกอัตโนมัติ
@@ -393,6 +404,9 @@ export class HomePage implements OnInit {
     modal.onDidDismiss()
       .then((data) => {
         this.modalValue = data.data;  // เซ็ตค่าที่รับจาก modal search filter
+        if (data.data != null) {
+
+        }
       });
     return await modal.present().then(() => {
       this.isOpenModal = true;
@@ -407,7 +421,7 @@ export class HomePage implements OnInit {
     });
     return setTimeout(() => {modal.present().then(() => { // หน่วงเวลา 0.5 วินาทีเพื่อให้ดึงข้อมูลจาก storage มาก่อน
       this.isOpenModal = true;
-   }); }, 500);
+   }); }, 1000);
   }
 
   // modal about
@@ -451,7 +465,7 @@ export class HomePage implements OnInit {
         this.readCategory(obj.category, this.from);
         event.target.complete();
       }
-    }, 1000);
+    }, 500);
   }
   // ปิด app เมื่อกดปุ่ม back button
   ionViewDidEnter() {
@@ -470,7 +484,7 @@ export class HomePage implements OnInit {
   }
   // end function ปิด app เมื่อกดปุ่ม back button
 
-  async present() {
+  async loadingLeart() {
     this.isPageLoading = true;
     return await this.loadingController.create({
       cssClass: 'my-custom-class',
@@ -485,7 +499,7 @@ export class HomePage implements OnInit {
     });
   }
 
-  async dismiss() {
+  async dismissLoadingAleart() {
     this.isPageLoading = false;
     return await this.loadingController.dismiss().then(() => {});
   }

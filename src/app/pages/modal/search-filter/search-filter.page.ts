@@ -10,12 +10,22 @@ import { AllService } from 'src/app/share/service/all.service';
 export class SearchFilterPage implements OnInit {
   listWebName: any;
   public webName = '';
-  public minmaxprice = {
+  public minmaxpriceOne = {
     upper: 1000,
     lower: 0
   };
+  public minmaxpriceTwo = {
+    upper: 10000,
+    lower: 1001
+  };
+  public minmaxpriceThree = {
+    lower: 10001
+  };
+
   dataModal: any;
   isClickOk = false;
+  selectPrice: any;
+  searchName: any;
   constructor(private modalCtrl: ModalController,
               private service: AllService) {
     this.getWebName();
@@ -37,10 +47,11 @@ export class SearchFilterPage implements OnInit {
     } else if (this.webName !== '' && this.isClickOk) { // กรณีเลือกชื่อเว็บ และ กดปุ่มok
       // console.log(this.dataModal);
       this.dataModal = {
-        min: this.minmaxprice.lower,
-        max: this.minmaxprice.upper,
+        min: this.minmaxpriceOne.lower,
+        max: this.minmaxpriceOne.upper,
         web: this.webName
       };
+      console.log('selectPrice ' + this.selectPrice);
       this.modalCtrl.dismiss(this.dataModal);
     }
   }

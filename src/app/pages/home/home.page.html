@@ -10,13 +10,13 @@
     </ion-toolbar>
     <!--search-->
     <ion-toolbar color="light">
-      <ion-searchbar placeholder="ค้นหา" [(ngModel)]="searchValue" (ionBlur)="search()" (ionFocus)="focus()"></ion-searchbar>
+      <ion-searchbar placeholder="ค้นหา" [(ngModel)]="searchValue" (ionBlur)="search()" (keyup.enter)="search()" ></ion-searchbar><!--(ionFocus)="focus()"-->
 
-      <ion-buttons slot="end" *ngIf="isFocus">
+      <!--<ion-buttons slot="end" *ngIf="isFocus">
         <ion-button size="small" shape="round" color="medium">
           <ion-icon name="search"></ion-icon>
         </ion-button>
-      </ion-buttons>
+      </ion-buttons>-->
 
       <ion-buttons slot="end">
         <ion-button size="small" shape="round" color="medium" (click)="searchFilter()">

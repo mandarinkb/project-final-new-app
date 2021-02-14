@@ -11,8 +11,8 @@
   </ion-toolbar>
 </ion-header>
 <ion-content padding>
-  <!--<ion-searchbar [(ngModel)]="searchName" placeholder="ค้นหา"></ion-searchbar>-->
-  <ion-item>
+  <ion-searchbar [(ngModel)]="searchName" placeholder="ค้นหา"></ion-searchbar>
+  <ion-item lines="none">
     <ion-label class="fw500" color="dark">เว็บไซต์</ion-label>
     <ion-select [(ngModel)]="webName" multiple="true" cancelText="ยกเลิก" okText="ตกลง">
       <div *ngFor="let item of listWebName">
@@ -21,32 +21,46 @@
     </ion-select>
   </ion-item>
 
-  <ion-item>
-    <ion-label class="no-margin-bottom">
-      <ion-text color="dark" class="fw500">ช่วงราคา</ion-text>
-    </ion-label>
-    <ion-range dualKnobs="true" [(ngModel)]="minmaxprice" min="0" max="1000" step="10" class="no-padding-top">
-      <ion-label slot="start">
-        <ion-text color="primary">฿ {{minmaxprice.lower}}</ion-text>
-      </ion-label>
-      <ion-label slot="end">
-        <ion-text color="primary">฿ {{minmaxprice.upper}}</ion-text>
-      </ion-label>
-    </ion-range>
-  </ion-item>
-  <ion-item>
-    <ion-label>
-      <ion-text style="color: red;font-size: 10px;">* กรณีราคามากกว่า 1000 ให้เลื่อนไปทางขวาสุด
-      </ion-text>
-    </ion-label>
-  </ion-item>
-  
+  <ion-radio-group [(ngModel)]="selectPrice" value="one">
+    <ion-label style="margin-left: 16px;" color="dark" class="fw500">ช่วงราคา</ion-label>
+    <ion-item lines="none" style="margin-left: 10px;">
+      <ion-radio slot="start" color="success" value="one"></ion-radio>
+      <ion-range style="margin-left: 5px;" dualKnobs="true" [(ngModel)]="minmaxpriceOne" min="0" max="1000" step="10" class="no-padding-top">
+        <ion-label slot="start">
+          <ion-text color="primary">฿ {{minmaxpriceOne.lower}}</ion-text>
+        </ion-label>
+        <ion-label slot="end">
+          <ion-text color="primary">฿ {{minmaxpriceOne.upper}}</ion-text>
+        </ion-label>
+      </ion-range>
+    </ion-item>
+
+    <ion-item lines="none" style="margin-left: 10px;">
+      <ion-radio slot="start" color="success" value="two"></ion-radio>
+      <ion-range style="margin-left: 5px;" dualKnobs="true" [(ngModel)]="minmaxpriceTwo" min="1001" max="10000" step="100" class="no-padding-top">
+        <ion-label slot="start">
+          <ion-text color="primary">฿ {{minmaxpriceTwo.lower}}</ion-text>
+        </ion-label>
+        <ion-label slot="end">
+          <ion-text color="primary">฿ {{minmaxpriceTwo.upper}}</ion-text>
+        </ion-label>
+      </ion-range>
+    </ion-item>
+
+    <ion-item lines="none" style="margin-left: 10px;">
+      <ion-text color="dark" class="fw500" style="margin-left: 5px;">มากกว่า 10000</ion-text>
+      <ion-radio slot="start" color="success" value="three"></ion-radio>
+    </ion-item>
+  </ion-radio-group>
+
   <div *ngIf="webName != ''; then enable; else disable"></div><!-- -->
   <ng-template #enable>
-    <ion-button expand="full" color="primary" (click)="clickClose();closeModal()">ตกลง</ion-button>
+    <ion-button style="margin-top: 15px;" expand="full" color="primary" (click)="clickClose();closeModal()">ตกลง
+    </ion-button>
   </ng-template>
   <ng-template #disable>
-    <ion-button [disabled]="true" expand="full" color="primary" (click)="closeModal()">ตกลง</ion-button>
+    <ion-button style="margin-top: 15px;" [disabled]="true" expand="full" color="primary" (click)="closeModal()">ตกลง
+    </ion-button>
   </ng-template>
-  
+
 </ion-content>
