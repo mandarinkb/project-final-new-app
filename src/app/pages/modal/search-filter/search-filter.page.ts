@@ -23,9 +23,9 @@ export class SearchFilterPage implements OnInit {
   };
 
   dataModal: any;
-  isClickOk = false;
-  selectPrice: any;
-  searchName: any;
+  isClickSearch = false;
+  selectPrice: any = 'one'; // default one
+  searchName: any = '';
   constructor(private modalCtrl: ModalController,
               private service: AllService) {
     this.getWebName();
@@ -34,24 +34,50 @@ export class SearchFilterPage implements OnInit {
   ngOnInit() {
   }
 
-  clickClose() {
-    console.log('click-close');
-    this.isClickOk = true;
+  clickSearch() {
+    this.isClickSearch = true;
+  }
+  radioChecked(v) {
+    this.selectPrice = v;
   }
   closeModal() {
-
     // ส่ง data เมื่อปิด modal
-    if (this.webName === '' || !this.isClickOk) {
+    if (!this.isClickSearch) {
       console.log('close modal without data');
       this.modalCtrl.dismiss(null);
-    } else if (this.webName !== '' && this.isClickOk) { // กรณีเลือกชื่อเว็บ และ กดปุ่มok
-      // console.log(this.dataModal);
-      this.dataModal = {
-        min: this.minmaxpriceOne.lower,
-        max: this.minmaxpriceOne.upper,
-        web: this.webName
-      };
-      console.log('selectPrice ' + this.selectPrice);
+    } else if (this.webName !== '' && this.isClickSearch) { // กรณีเลือกชื่อเว็บ และ กดปุ่มok
+      switch (this.selectPrice) {
+        case 'one':
+          console.log('1');
+          this.dataModal = {
+            min: this.minmaxpriceOne.lower,
+            max: this.minmaxpriceOne.upper,
+            web: this.webName,
+            search: this.searchName
+          };
+          break;
+        case 'two':
+          console.log('2');
+          this.dataModal = {
+            min: this.minmaxpriceTwo.lower,
+            max: this.minmaxpriceTwo.upper,
+            web: this.webName,
+            search: this.searchName
+          };
+          break;
+        case 'three':
+          console.log('3');
+          this.dataModal = {
+            min: this.minmaxpriceThree.lower,
+            max: this.minmaxpriceThree.lower,
+            web: this.webName,
+            search: this.searchName
+          };
+          break;
+        default:
+          console.log('not found');
+          break;
+      }
       this.modalCtrl.dismiss(this.dataModal);
     }
   }

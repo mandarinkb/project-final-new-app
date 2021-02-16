@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit} from '@angular/core';
 import { MenuController, Platform, LoadingController, ModalController, IonInfiniteScroll, Events } from '@ionic/angular';
 import { SearchFilterPage } from '../modal/search-filter/search-filter.page';
 import { AllService } from 'src/app/share/service/all.service';
@@ -36,7 +36,7 @@ export class HomePage implements OnInit {
   categoryData: any;
   title = 'สินค้าลดราคา';
 
-  isFocus = false;
+  // isFocus = false;
   historySearch: any = []; // ไว้เก็บค่า search ลง storage
 
   isRemainder: any;
@@ -242,30 +242,31 @@ export class HomePage implements OnInit {
       this.dismissLoadingAleart();
     });
   }
-  // focus() {
-  //   this.isFocus = true;
-  // }
 
   // ช่อง search
   search() {
-    this.isFocus = false;
     this.haveData = true;
     this.from = 0;
     this.itemValue = []; // reset ค่า item
-    // console.log(this.searchValue);
     // กรณีช่อง search มีค่า
     if (this.searchValue !== '') {
-      // กรณีใช้ filter
-      if (this.modalValue !== null) {
-        // รับค่าที่ได้รับมาจาก modal filter
-        this.readNameAndFilter(this.searchValue, this.modalValue.web, this.modalValue.min, this.modalValue.max, this.from);
-        console.log('search filter');
-        this.title = this.searchValue;
-      } else {  // กรณีไม่ได้ใช้ filter
         this.readName(this.searchValue, this.from);
         console.log('search');
         this.title = this.searchValue;
-      }
+
+    } else { // กรณีช่อง search ไม่มีค่า
+      this.readHistory(0);  // ค่าเริ่มต้น
+    }
+    this.modalValue = null;
+  }
+  searchFilterCall() {
+    this.haveData = true;
+    this.from = 0;
+    this.itemValue = []; // reset ค่า item
+    if (this.modalValue.length !== 0) {
+      this.readNameAndFilter(this.modalValue.search, this.modalValue.web, this.modalValue.min, this.modalValue.max, this.from);
+      console.log('search filter');
+      this.title = this.modalValue.search;
     } else { // กรณีช่อง search ไม่มีค่า
       this.readHistory(0);  // ค่าเริ่มต้น
     }
@@ -328,6 +329,8 @@ export class HomePage implements OnInit {
     };
     this.jsonNameAndFilter = JSON.stringify(objName); // create json
     this.service.postNameAndFilter(this.jsonNameAndFilter, fromValue).subscribe((res: Items[]) => {
+      console.log(this.itemValue);
+
       this.itemValue = this.itemValue.concat(res);
       // ค้นหาไม่พบให้แจ้งเตือน
       if (res.length === 0 && fromValue === 0) {
@@ -405,7 +408,7 @@ export class HomePage implements OnInit {
       .then((data) => {
         this.modalValue = data.data;  // เซ็ตค่าที่รับจาก modal search filter
         if (data.data != null) {
-
+          this.searchFilterCall();
         }
       });
     return await modal.present().then(() => {
