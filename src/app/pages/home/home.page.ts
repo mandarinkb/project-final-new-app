@@ -57,7 +57,7 @@ export class HomePage implements OnInit {
               public events: Events) { }
 
   ngOnInit() {
-    this.loadingLeart();
+    // this.loadingLeart();
     this.readHistory(this.from);
     this.checkWebInStorage();
     this.checkUserIdInStorage();
@@ -235,11 +235,11 @@ export class HomePage implements OnInit {
 
     this.service.postHistory(formHistory, fromValue).subscribe((res: Items[]) => {
       this.itemValue = this.itemValue.concat(res);  // เรียกมา add ใน item เรื่อยๆ
-      this.dismissLoadingAleart();
+      // this.dismissLoadingAleart();
     }, err => {
       this.haveData = false;
 
-      this.dismissLoadingAleart();
+      // this.dismissLoadingAleart();
     });
   }
 
@@ -275,9 +275,9 @@ export class HomePage implements OnInit {
 
   // search by name
   async readName(n, fromValue) {
-    if (fromValue === 0) {
-      this.loadingLeart();
-    }
+    // if (fromValue === 0) {
+    //   this.loadingLeart();
+    // }
 
     this.isItem = false;
     this.isSearch = true;
@@ -301,18 +301,18 @@ export class HomePage implements OnInit {
       if (res.length !== 0) {
         this.keepHistory();
       }
-      this.dismissLoadingAleart();
+      // this.dismissLoadingAleart();
     }, err => {
       this.haveData = false;
-      this.dismissLoadingAleart();
+      // this.dismissLoadingAleart();
     });
   }
 
   // search by name และใช้ filter search
   async readNameAndFilter(n, wn, mi, ma, fromValue) {
-    if (fromValue === 0) {
-      this.loadingLeart();
-    }
+    // if (fromValue === 0) {
+    //   this.loadingLeart();
+    // }
     this.isItem = false;
     this.isSearch = false;
     this.isSearchAndFilter = true;
@@ -340,10 +340,10 @@ export class HomePage implements OnInit {
       if (res.length !== 0) {
         this.keepHistory();
       }
-      this.dismissLoadingAleart();
+      // this.dismissLoadingAleart();
     }, err => {
       this.haveData = false;
-      this.dismissLoadingAleart();
+      // this.dismissLoadingAleart();
     });
   }
 
@@ -364,9 +364,9 @@ export class HomePage implements OnInit {
 
   // search by menu
   async readCategory(c, fromValue) {
-    if (fromValue === 0) {
-      this.loadingLeart();
-    }
+    // if (fromValue === 0) {
+    //   this.loadingLeart();
+    // }
     // await this.getWebNameStorage();
     const webNameValue: any = [];
     for (const webNameStorage of this.listWebNameStorage) {
@@ -393,10 +393,10 @@ export class HomePage implements OnInit {
       }
       this.itemValue = this.itemValue.concat(res);
       // this.categoryData = res;
-      this.dismissLoadingAleart();
+      // this.dismissLoadingAleart();
     }, err => {
       this.haveData = false;
-      this.dismissLoadingAleart();
+      // this.dismissLoadingAleart();
     });
   }
   // modal search filter เมื่อปิด modal จะเรียกอัตโนมัติ
@@ -487,25 +487,25 @@ export class HomePage implements OnInit {
   }
   // end function ปิด app เมื่อกดปุ่ม back button
 
-  async loadingLeart() {
-    this.isPageLoading = true;
-    return await this.loadingController.create({
-      cssClass: 'my-custom-class',
-      message: 'Please wait...'
-      // duration: 5000,
-    }).then(a => {
-      a.present().then(() => {
-        if (!this.isPageLoading) {
-          a.dismiss().then(() => {});
-        }
-      });
-    });
-  }
+  // async loadingLeart() {
+  //   this.isPageLoading = true;
+  //   return await this.loadingController.create({
+  //     cssClass: 'my-custom-class',
+  //     message: 'Please wait...'
+  //     // duration: 5000,
+  //   }).then(a => {
+  //     a.present().then(() => {
+  //       if (!this.isPageLoading) {
+  //         a.dismiss().then(() => {});
+  //       }
+  //     });
+  //   });
+  // }
 
-  async dismissLoadingAleart() {
-    this.isPageLoading = false;
-    return await this.loadingController.dismiss().then(() => {});
-  }
+  // async dismissLoadingAleart() {
+  //   this.isPageLoading = false;
+  //   return await this.loadingController.dismiss().then(() => {});
+  // }
 }
 
 

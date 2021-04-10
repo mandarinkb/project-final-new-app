@@ -11,8 +11,11 @@
   </ion-toolbar>
 </ion-header>
 <ion-content padding>
-  <ion-searchbar [(ngModel)]="searchName" placeholder="ค้นหา"></ion-searchbar>
-  <ion-item lines="none">
+  <ion-item lines="full">
+    <ion-searchbar [(ngModel)]="searchName" placeholder="ค้นหา"></ion-searchbar>
+  </ion-item>
+  
+  <ion-item>
     <ion-label class="fw500" color="dark">เว็บไซต์</ion-label>
     <ion-select [(ngModel)]="webName" multiple="true" cancelText="ยกเลิก" okText="ตกลง">
       <div *ngFor="let item of listWebName">
